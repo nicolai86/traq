@@ -1,0 +1,8 @@
+# v0.0.1
+
+- add support to track times using a simple text based format
+- add support to track times for different projects using the `-p <project>` switch
+- add support to list the current days tracking using an empty argument list
+- add support to list the times for a week using the `-w <weeknumber>` switch
+- add `traqtrans` programm to convert ISO 8601 timestamps to unix timestamps
+- add `traqeval` programm to sum unix timestamps
