@@ -22,78 +22,7 @@
 set +e
 
 TRAQ_PATH="$HOME/.traq/"
-
-# # make sure we have a week directory
-# mkdir -p $WEEK_DIRECTORY
-
-function traq() {
-  # return kw-<week>/timestamps-<current date>
-  function today_file() {
-    local WEEK_NUMBER=`date +%V`
-    if [ -z "$DATE" ]; then
-      DATE=`date +"%Y-%m-%d"`
-    else
-      if [ "$DATE" != "*" ]; then
-        WEEK_NUMBER=`date -j -f "%Y-%m-%d" "$DATE" "+%V"`
-      fi
-    fi
-
-    if [ ! -z $WEEK ]; then
-      WEEK_NUMBER=$WEEK
-      DATE="*"
-    fi
-
-    printf "kw-$WEEK_NUMBER/timestamps-$DATE"
-  }
-
-  # returns the current traq file, taking -p option into account, if any.
-
-  # echo only if verbose is enabled
-  function verboselog() {
-    if [ ! -z $VERBOSE ]
-    then
-      printf "$@\n"
-    fi
-  }
-
-  # output the current date like this: 'Sun Sep 23 11:28:02 +0400 2012'
-  function traqdate() {
-    printf "$(date +"%a %b %d %H:%M:%S %z %Y")"
-  }
-
-  # generate the correct tag for a given tag
-  function traqtag() {
-    if [ "$@" == "stop" ]
-    then
-      printf "stop\n"
-    else
-      printf "#$@\n"
-    fi
-  }
-
-  local TAG=$1
-
-  local TRAQFILE="$HOME/.traq/$PROJECT/$(today_file)"
-
-  # echo $TRAQFILE
-  if [ -z $TAG ]; then # no tag was given; output the content
-    if [ -e "$TRAQFILE" -o "$DATE" = "*" ]; then
-      for FILE in $TRAQFILE; do
-        cat $FILE
-        printf "%%%%\n"
-      done
-    else
-      printf "$TRAQFILE does not exist.\n" 1>&2
-    fi
-  else # tag was given; handle tag
-    if [ -z "$WEEK" -a -z "$DATE" ]; then
-      mkdir -p $(dirname $TRAQFILE)
-      printf "$(traqdate);$(traqtag $TAG)\n" >> $TRAQFILE
-    else
-      printf "can not combine -d or -w with a tag\n" 1>&2
-    fi
-  fi
-}
+. $TRAQ_PATH/traq/traq_helper.sh
 
 PROJECT="timestamps"
 VERBOSE=
@@ -113,7 +42,6 @@ do
       ;;
     w)
       WEEK="$OPTARG"
-      DATE="*"
       ;;
     \?)
       printf "Invalid option: -$OPTARG\n" >&2
@@ -126,4 +54,5 @@ do
 done
 shift $(($OPTIND - 1))
 
-traq "$@"
+TAG=$@
+traq "$TAG" "$DATE" "$WEEK" "$PROJECT"

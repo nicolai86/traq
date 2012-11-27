@@ -21,7 +21,8 @@ function extracttag() {
 
 while read LINE
 do
-  if [ "$LINE" != "%%" ]; then
+  if [ "$LINE" != "%%" ]
+  then
     printf "$(date2timestamp "$(extractdate "$LINE")");$(extracttag $LINE)\n"
   else
     printf "%%%%\n"
