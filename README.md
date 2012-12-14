@@ -1,10 +1,10 @@
 # traq
 
-bash based time tracking using only files
+bash based time tracking using text files
 
 ## Installation
 
-`traq` assumes you're installing it to your home directory, into `~/.traq`. You're all setup with these four commands:
+`traq` assumes you're installing it to your home directory, into `~/.traq`. Four commands and you're all set up:
 
 ```
 $ mkdir ~/.traq
@@ -27,7 +27,7 @@ bats traq_test.bats
 
 `$ traq foo`: creates an entry for #foo at todays date
 
-`$ traq stop`: appends the special stop delimitor to todays file
+`$ traq stop`: appends the special stop delimiter to todays file
 
 `$ traq`: echo the content of todays file to stdout. If the file does not exist, nothing is echoed.
 
@@ -41,12 +41,14 @@ All files are placed under
 
 ```
 $ $HOME/.traq/timestamps/kw-<week number>/timestamps-<date>
+# eg $HOME/.traq/timestamps/kw-50/timestamps-2012-12-12
 ```
 
 or, if `-p <project>` was given, under
 
 ```
 $ $HOME/.traq/<project>/kw-<week number>/timestamps-<date>
+# eg $ $HOME/.traq/client-a/kw-50/timestamps-2012-12-12
 ```
 
 Each file can contain multiple lines of the following format:
@@ -70,11 +72,18 @@ To ease evaluation of traq-files `traq` comes with two helper scripts, `traqtran
 `traqtrans` transforms the timestamp into a unix timestamp,
 and `traqeval` sums up tags.
 
-Just pipe the output and you'll get something like this:
+```
+$ traq -p test -w 39 | traqtrans
+1348715105;#foo
+1348715705;#bar
+1348716305;stop
+%%
+```
+
+Pipe both together and you'll get something like this:
 
 ```
 $ traq -p test -w 39 | traqtrans | traqeval
-
 2012-09-27
 #foo:0.16666666666666666
 #bar:0.16666666666666666
