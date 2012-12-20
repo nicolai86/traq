@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # traq
 # simple time tracking using files, organized by calendar week

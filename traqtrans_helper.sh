@@ -14,6 +14,30 @@ function date2timestamp() {
   fi
 }
 
+# convert unix timestamp into date
+function timestamp2date() {
+  is_osx
+  OSX=$?
+  if [ $OSX -eq 0 ]
+  then
+    date -j -f "%s" "$1" "+%a %b %d %T %z %Y"
+  else
+    date -d "@$1" "+%a %b %d %T %z %Y"
+  fi
+}
+
+# convert date into %Y-%m-%d
+function format_date() {
+  is_osx
+  OSX=$?
+  if [ $OSX -eq 0 ]
+  then
+    date -j -f "%a %b %d %T %z %Y" "$1" "+%Y-%m-%d"
+  else
+    date -d "$1" "+%Y-%m-%d"
+  fi
+}
+
 # extract the date string from a traq line
 function extract_date() {
   echo "$@" | cut -d';' -f1

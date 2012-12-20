@@ -1,66 +1,58 @@
-#!/usr/bin/env ruby
-# calculate total hours worked from a transformed traq file
-# it is important to pipe traq output/ file through traqtrans first
+#!/usr/bin/env bash
 
-require 'readline'
-require 'time'
+set +e
 
-def eval_day lines
-  totalled = Hash.new
+. $TRAQ_PATH/traqtrans_helper.sh
 
-  current_tag = nil
-  started_at = nil
+TRAQ_CONTENT=""
 
-  lines.each do |line|
-    next if line =~ /^\s*$/
-    next if line =~ /^%+$/
+declare -A totalled
+current_tag=""
+started_at=""
+ended_at=""
 
-    (timestamp, tag) = line.split(';')
+while read LINE
+do
+  if [ "$LINE" != "%%" ]
+  then
+    # sum up the timestamps
+    timestamp=$(extract_date "$LINE")
+    tag=$(extract_tag "$LINE")
 
-    next unless tag && timestamp
+    if [ "$timestamp" != "" -a "$tag" != "" ]
+    then
+      # first tag seen? just remember the tag
+      if [ "$current_tag" = "" ]
+      then
+        current_tag="$tag"
+        started_at="$timestamp"
+        ended_at=""
+      else
+        # follow-up tag? sum up the time
+        ended_at="$timestamp"
+        diff=$(echo "$ended_at - $started_at" | bc)
 
-    if (current_tag == nil)
-      current_tag = tag
-      started_at = timestamp
-      ended_at = nil
-    else
-      ended_at = timestamp
-      diff = ended_at.to_i - started_at.to_i
+        if [[ ${totalled[$current_tag]} ]]
+        then
+          totalled[$current_tag]=$(echo "${totalled[$current_tag]} + $diff" | bc)
+        else
+          totalled[$current_tag]=$diff
+        fi
 
-      totalled[current_tag] ||= 0
-      totalled[current_tag] += diff
-
-      current_tag = nil
-      current_tag = tag
-
-      started_at = timestamp
-    end
-  end
-
-  STDOUT << Time.strptime(started_at, "%s").strftime("%Y-%m-%d") << "\n"
-  totalled.each do |(key, timespan)|
-    next if key.strip == 'stop'
-    STDOUT << "#{key.strip}:#{(timespan.to_f / 60.0 / 60.0)}\n"
-  end
-  STDOUT << "%%\n"
-end
-
-def eval lines
-  day_lines = []
-  lines.each do |line|
-    if line =~ /^%*$/
-      eval_day day_lines
-      day_lines = []
-    else
-      day_lines << line
-    end
-  end
-end
-
-if ARGV.count < 1
-  eval STDIN
-else
-  ARGV.each do |f|
-    eval IO.readlines(f)
-  end
-end
+        current_tag="$tag"
+        started_at="$timestamp"
+      fi
+    fi
+  else
+    echo $(format_date "$(timestamp2date $started_at)")
+    for key in "${!totalled[@]}"; do
+      if [ "$key" != "stop" ]
+      then
+        duration=$(echo "scale=4; ${totalled[$key]} / 60.0 / 60.0" | bc)
+        echo "$key:$duration"
+      fi
+    done
+    echo "%%"
+    totalled=()
+  fi
+done

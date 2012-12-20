@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # convert the output of a traq file
 # <date>;tag
 # will become
