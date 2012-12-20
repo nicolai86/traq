@@ -2,6 +2,8 @@
 
 bash based time tracking using text files
 
+Only used with bash version 4.2.39 or newer.
+
 ## Installation
 
 `traq` assumes you're installing it to your home directory, into `~/.traq`. Four commands and you're all set up:
