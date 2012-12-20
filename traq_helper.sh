@@ -1,9 +1,17 @@
 #!/usr/bin/env bash
 
+. $TRAQ_PATH/os_helper.sh
+
 # converts a date into the corresponding week number
 function week_number() {
-  date -j -f "%Y-%m-%d" "$1" "+%V"
+  if [ $(is_osx) ]
+  then
+    date -j -f "%Y-%m-%d" "$1" "+%V"
+  else
+    date -d "$1" "+%V"
+  fi
 }
+
 function current_week_number() {
   date +%V
 }
