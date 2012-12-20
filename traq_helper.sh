@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# # make sure we have a week directory
-# mkdir -p $WEEK_DIRECTORY
 
 # converts a date into the corresponding week number
 function week_number() {
