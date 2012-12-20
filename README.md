@@ -6,7 +6,7 @@ Only used with bash version 4.2.39 or newer. Works on Linux and OS X
 
 ## Installation
 
-`traq` assumes you're installing it to your home directory, into `~/.traq`. Four commands and you're all set up:
+`traq` assumes you're installing it to your home directory, into `~/.traq`. This will set you up:
 
 ```
 $ mkdir ~/.traq
