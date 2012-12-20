@@ -24,7 +24,7 @@ $ cd $HOME/.traq/traq
 $ git pull origin master
 ```
 
-**Linux Note** `traqeval` requires `bc` to be available. If `which bc` returns nothing you need install `bc` via `aptitude` or something whatever package manager you're using.
+**Linux Note** `traqeval` requires `bc` to be available. If `which bc` returns nothing you need install `bc` via `aptitude` or whatever package manager you're using.
 
 ## Tests
 
