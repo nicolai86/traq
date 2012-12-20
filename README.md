@@ -20,7 +20,7 @@ The project has some tests using [bats](https://github.com/sstephenson/bats). As
 
 ```
 cd $HOME/.traq/traq
-bats traq_test.bats
+bats tests/
 ```
 
 ## Usage
