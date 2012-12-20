@@ -21,7 +21,7 @@ To update your installation all you need to do is to
 
 ```
 $ cd $HOME/.traq/traq
-$ git fetch origin master
+$ git pull origin master
 ```
 
 ## Tests
