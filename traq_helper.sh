@@ -4,7 +4,9 @@
 
 # converts a date into the corresponding week number
 function week_number() {
-  if [ $(is_osx) ]
+  is_osx
+  OSX=$?
+  if [ $OSX -eq 0 ]
   then
     date -j -f "%Y-%m-%d" "$1" "+%V"
   else
@@ -13,7 +15,7 @@ function week_number() {
 }
 
 function current_week_number() {
-  date +%V
+  date "+%V"
 }
 
 # output the current date like this: 'Sun Sep 23 11:28:02 +0400 2012'
@@ -33,7 +35,7 @@ function traq_tag() {
 
 # todays date, formatted for traq
 function traq_date() {
-  date +"%Y-%m-%d"
+  date "+%Y-%m-%d"
 }
 
 # return kw-<week>/timestamps-<current date>

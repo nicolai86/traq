@@ -4,7 +4,9 @@
 
 # convert date strings into unix timestamps
 function date2timestamp() {
-  if [ $(is_osx) ]
+  is_osx
+  OSX=$?
+  if [ $OSX -eq 0 ]
   then
     date -j -f "%a %b %d %T %z %Y" "$1" "+%s"
   else
