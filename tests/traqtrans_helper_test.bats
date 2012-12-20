@@ -1,8 +1,6 @@
 #!/usr/bin/env bats
 
-TRAQ_PATH="$HOME/.traq/"
-
-. $TRAQ_PATH/traq/traqtrans_helper.sh
+. $TRAQ_PATH/traqtrans_helper.sh
 
 @test "extract_date returns correct timestamp" {
   result="$(extract_date "Thu Sep 27 07:05:05 +0400 2012;#foo")"

@@ -12,6 +12,7 @@ Only used with bash version 4.2.39 or newer.
 $ mkdir ~/.traq
 $ git clone git@github.com:nicolai86/traq.git ~/.traq/traq
 $ echo "export PATH=$PATH:$HOME/.traq/traq" >> ~/.bash_profile
+$ echo "export TRAQ_PATH="$HOME/.traq/traq" >> ~/.bash_profile
 $ . ~/.bash_profile
 $ which traq # => ~/.traq/traq/traq
 ```

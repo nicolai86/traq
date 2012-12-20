@@ -1,8 +1,6 @@
 #!/usr/bin/env bats
 
-TRAQ_PATH="$HOME/.traq/"
-
-. $TRAQ_PATH/traq/traq_helper.sh
+. $TRAQ_PATH/traq_helper.sh
 
 @test "traq_tag stop - stop is a special tag which does not get a prefix" {
   result="$(traq_tag stop)"

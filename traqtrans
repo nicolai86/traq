@@ -6,8 +6,7 @@
 
 set +e
 
-TRAQ_PATH="$HOME/.traq/"
-. $TRAQ_PATH/traq/traqtrans_helper.sh
+. $TRAQ_PATH/traqtrans_helper.sh
 
 while read LINE
 do

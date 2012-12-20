@@ -21,8 +21,7 @@
 
 set +e
 
-TRAQ_PATH="$HOME/.traq/"
-. $TRAQ_PATH/traq/traq_helper.sh
+. $TRAQ_PATH/traq_helper.sh
 
 PROJECT="timestamps"
 VERBOSE=
