@@ -52,15 +52,15 @@ bats tests/
 All files are placed under
 
 ```
-$ $HOME/.traq/timestamps/kw-<week number>/timestamps-<date>
-# eg $HOME/.traq/timestamps/kw-50/timestamps-2012-12-12
+$ $HOME/.traq/timestamps/<current year>/kw-<week number>/timestamps-<date>
+# eg $HOME/.traq/timestamps/2012/kw-50/timestamps-2012-12-12
 ```
 
 or, if `-p <project>` was given, under
 
 ```
-$ $HOME/.traq/<project>/kw-<week number>/timestamps-<date>
-# eg $ $HOME/.traq/client-a/kw-50/timestamps-2012-12-12
+$ $HOME/.traq/<project>/<current year>/kw-<week number>/timestamps-<date>
+# eg $ $HOME/.traq/client-a/2012/kw-50/timestamps-2012-12-12
 ```
 
 Each file can contain multiple lines of the following format:
