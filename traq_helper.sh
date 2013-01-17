@@ -2,23 +2,9 @@
 
 . $TRAQ_PATH/os_helper.sh
 
-if [ `is_osx` ]
-then
-  TRAQ_DATA_DIR="~/Library/traq"
-else
-  if [ -z "$XDG_DATA_HOME" ]
-  then
-    XDG_DATA_HOME="~/.local/share"
-  fi
-
-  TRAQ_DATA_DIR="$XDG_DATA_HOME/traq"
-fi
-
 # converts a date into the corresponding week number
 function week_number() {
-  is_osx
-  OSX=$?
-  if [ $OSX -eq 0 ]
+  if [[ $(is_osx) -eq 0 ]]
   then
     date -j -f "%Y-%m-%d" "$1" "+%V"
   else
@@ -27,9 +13,7 @@ function week_number() {
 }
 
 function year_number() {
-  is_osx
-  OSX=$?
-  if [ $OSX -eq 0 ]
+  if [[ $(is_osx) -eq 0 ]]
   then
     date -j -f "%Y-%m-%d" "$1" "+%Y"
   else

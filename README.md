@@ -9,9 +9,10 @@ Only used with bash version 4.2.39 or newer. Works on Linux and OS X
 `traq` assumes you're installing it to your home directory, into `~/.traq`. This will set you up:
 
     $ mkdir ~/.traq
-    $ git clone git@github.com:nicolai86/traq.git ~/.traq/traq
-    $ echo "export PATH=$PATH:$HOME/.traq/traq" >> ~/.bash_profile
-    $ echo "export TRAQ_PATH=$HOME/.traq/traq" >> ~/.bash_profile
+    $ git clone git@github.com:nicolai86/traq.git ~/.traq
+    $ echo "export TRAQ_PATH=$HOME/.traq" >> ~/.bash_profile
+    $ echo "export TRAQ_DATA_DIR=$HOME/Library/traq >> ~/.bash_profile
+    $ echo "export PATH=$PATH:$TRAQ_PATH" >> ~/.bash_profile
     $ . ~/.bash_profile
     $ which traq
 
@@ -28,7 +29,7 @@ $ git pull origin master
 
 If you have `bash-completion` installed you can setup bash completion for traq as well. This example assumes you are using [HomeBrew][1] and have `bash-completion` installed.
 
-    $ ln -s $HOME/.traq/traq/traq_completion.sh $(brew --prefix)/etc/bash_completion.d/traq
+    $ ln -s $TRAQ_PATH/traq_completion.sh $(brew --prefix)/etc/bash_completion.d/traq
 
 Ubuntu users can do the following:
 
@@ -40,7 +41,7 @@ Ubuntu users can do the following:
 The project has some tests using [bats](https://github.com/sstephenson/bats). Assuming you got `bats` installed, run them using the following command:
 
 ```
-cd $HOME/.traq/traq
+cd $TRAQ_PATH
 bats tests/
 ```
 

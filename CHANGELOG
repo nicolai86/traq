@@ -1,3 +1,8 @@
+# v0.1
+
+- add bash completion support
+- add customizable data directory
+
 # v0.0.2
 
 - traqeval is based on bash now

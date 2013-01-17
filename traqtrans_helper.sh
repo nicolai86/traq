@@ -4,9 +4,7 @@
 
 # convert date strings into unix timestamps
 function date2timestamp() {
-  is_osx
-  OSX=$?
-  if [ $OSX -eq 0 ]
+  if [[ $(is_osx) -eq 0 ]]
   then
     date -j -f "%a %b %d %T %z %Y" "$1" "+%s"
   else
@@ -16,9 +14,7 @@ function date2timestamp() {
 
 # convert unix timestamp into date
 function timestamp2date() {
-  is_osx
-  OSX=$?
-  if [ $OSX -eq 0 ]
+  if [[ $(is_osx) -eq 0 ]]
   then
     date -j -f "%s" "$1" "+%a %b %d %T %z %Y"
   else
@@ -28,9 +24,7 @@ function timestamp2date() {
 
 # convert date into %Y-%m-%d
 function format_date() {
-  is_osx
-  OSX=$?
-  if [ $OSX -eq 0 ]
+  if [[ $(is_osx) -eq 0 ]]
   then
     date -j -f "%a %b %d %T %z %Y" "$1" "+%Y-%m-%d"
   else

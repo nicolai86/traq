@@ -15,7 +15,7 @@ function _traq() {
 
     # project flag was entered. suggest known projects
     -p)
-      local projects=$(ls $HOME/.traq | grep -v traq)
+      local projects=$(ls $TRAQ_DATA_DIR | grep -v traq)
       COMPREPLY=( $(compgen -W "${projects}" -- $cur) )
       return 0
       ;;
