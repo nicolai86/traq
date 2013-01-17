@@ -62,19 +62,19 @@ bats tests/
 
 All files are placed under
 
-    $ $HOME/.traq/timestamps/<current year>/kw-<week number>/timestamps-<date>
-    # eg $HOME/.traq/timestamps/2012/kw-50/timestamps-2012-12-12
+    $ $TRAQ_DATA_DIR/timestamps/<current year>/kw-<week number>/timestamps-<date>
+    # eg $TRAQ_DATA_DIR/timestamps/2012/kw-50/timestamps-2012-12-12
 
 or, if `-p <project>` was given, under
 
-    $ $HOME/.traq/<project>/<current year>/kw-<week number>/timestamps-<date>
-    # eg $HOME/.traq/client-a/2012/kw-50/timestamps-2012-12-12
+    $ $TRAQ_DATA_DIR/<project>/<current year>/kw-<week number>/timestamps-<date>
+    # eg $TRAQ_DATA_DIR/client-a/2012/kw-50/timestamps-2012-12-12
 
 Each file can contain multiple lines of the following format:
 
-```
-<timestamp>;<tag>
-```
+
+    <timestamp>;<tag>
+
 
 Here's some sample content:
 
