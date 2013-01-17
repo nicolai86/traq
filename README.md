@@ -8,7 +8,8 @@ Only used with bash version 4.2.39 or newer. Works on Linux and OS X
 
 `traq` assumes you're installing it to your home directory, into `~/.traq`. This will set you up:
 
-    $ mkdir ~/.traq
+    $ mkdir $HOME/.traq
+    $ mkdir $HOME/Library/traq
     $ git clone git@github.com:nicolai86/traq.git ~/.traq
     $ echo "export TRAQ_PATH=$HOME/.traq" >> ~/.bash_profile
     $ echo "export TRAQ_DATA_DIR=$HOME/Library/traq" >> ~/.bash_profile
