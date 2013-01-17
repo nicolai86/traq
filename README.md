@@ -99,8 +99,8 @@ Pipe both together and you'll get something like this:
 
     $ traq -p test -w 39 | traqtrans | traqeval
     2012-09-27
-    #foo:0.16666666666666666
-    #bar:0.16666666666666666
+    #foo:0.1666
+    #bar:0.1666
     %%
 
 [1]:http://mxcl.github.com/homebrew/
