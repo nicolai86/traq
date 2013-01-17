@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 
-. $TRAQ_PATH/os_helper.sh
-
 # converts a date into the corresponding week number
 function week_number() {
-  if [[ $(is_osx) -eq 0 ]]
+  if [ "$(uname)" == "Darwin" ]
   then
     date -j -f "%Y-%m-%d" "$1" "+%V"
   else
@@ -13,7 +11,7 @@ function week_number() {
 }
 
 function year_number() {
-  if [[ $(is_osx) -eq 0 ]]
+  if [ "$(uname)" == "Darwin" ]
   then
     date -j -f "%Y-%m-%d" "$1" "+%Y"
   else

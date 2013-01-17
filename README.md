@@ -13,7 +13,7 @@ Only used with bash version 4.2.39 or newer. Works on Linux and OS X
     $ git clone git@github.com:nicolai86/traq.git ~/.traq
     $ echo "export TRAQ_PATH=$HOME/.traq" >> ~/.bash_profile
     $ echo "export TRAQ_DATA_DIR=$HOME/Library/traq" >> ~/.bash_profile
-    $ echo "export PATH=$PATH:$TRAQ_PATH" >> ~/.bash_profile
+    $ echo "export PATH=$PATH:$HOME/.traq" >> ~/.bash_profile
     $ . ~/.bash_profile
     $ which traq
 
