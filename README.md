@@ -28,9 +28,12 @@ $ git pull origin master
 
 If you have `bash-completion` installed you can setup bash completion for traq as well. This example assumes you are using [HomeBrew][1] and have `bash-completion` installed.
 
-```
-$ ln -s $HOME/.traq/traq/traq_completion.sh $(brew --prefix)/etc/bash_completion.d/traq
-```
+    $ ln -s $HOME/.traq/traq/traq_completion.sh $(brew --prefix)/etc/bash_completion.d/traq
+
+Ubuntu users can do the following:
+
+    $ sudo apt-get install bash-completion
+    $ echo ". $TRAQ_PATH/traq_completion.sh" >> ~/.bash_profile
 
 ## Tests
 
