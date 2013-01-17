@@ -8,14 +8,12 @@ Only used with bash version 4.2.39 or newer. Works on Linux and OS X
 
 `traq` assumes you're installing it to your home directory, into `~/.traq`. This will set you up:
 
-```
-$ mkdir ~/.traq
-$ git clone git@github.com:nicolai86/traq.git ~/.traq/traq
-$ echo "export PATH=$PATH:$HOME/.traq/traq" >> ~/.bash_profile
-$ echo "export TRAQ_PATH=$HOME/.traq/traq" >> ~/.bash_profile
-$ . ~/.bash_profile
-$ which traq # => ~/.traq/traq/traq
-```
+    $ mkdir ~/.traq
+    $ git clone git@github.com:nicolai86/traq.git ~/.traq/traq
+    $ echo "export PATH=$PATH:$HOME/.traq/traq" >> ~/.bash_profile
+    $ echo "export TRAQ_PATH=$HOME/.traq/traq" >> ~/.bash_profile
+    $ . ~/.bash_profile
+    $ which traq
 
 To update your installation all you need to do is to
 
@@ -25,6 +23,14 @@ $ git pull origin master
 ```
 
 **Linux Note** `traqeval` requires `bc` to be available. If `which bc` returns nothing you need install `bc` via `aptitude` or whatever package manager you're using.
+
+## Bash Completion
+
+If you have `bash-completion` installed you can setup bash completion for traq as well. This example assumes you are using [HomeBrew][1] and have `bash-completion` installed.
+
+```
+$ ln -s $HOME/.traq/traq/traq_completion.sh $(brew --prefix)/etc/bash_completion.d/traq
+```
 
 ## Tests
 
@@ -51,17 +57,13 @@ bats tests/
 
 All files are placed under
 
-```
-$ $HOME/.traq/timestamps/<current year>/kw-<week number>/timestamps-<date>
-# eg $HOME/.traq/timestamps/2012/kw-50/timestamps-2012-12-12
-```
+    $ $HOME/.traq/timestamps/<current year>/kw-<week number>/timestamps-<date>
+    # eg $HOME/.traq/timestamps/2012/kw-50/timestamps-2012-12-12
 
 or, if `-p <project>` was given, under
 
-```
-$ $HOME/.traq/<project>/<current year>/kw-<week number>/timestamps-<date>
-# eg $ $HOME/.traq/client-a/2012/kw-50/timestamps-2012-12-12
-```
+    $ $HOME/.traq/<project>/<current year>/kw-<week number>/timestamps-<date>
+    # eg $HOME/.traq/client-a/2012/kw-50/timestamps-2012-12-12
 
 Each file can contain multiple lines of the following format:
 
@@ -71,11 +73,9 @@ Each file can contain multiple lines of the following format:
 
 Here's some sample content:
 
-```
-Thu Sep 27 07:05:05 +0400 2012;#foo
-Thu Sep 27 07:15:05 +0400 2012;#bar
-Thu Sep 27 07:25:05 +0400 2012;stop
-```
+    Thu Sep 27 07:05:05 +0400 2012;#foo
+    Thu Sep 27 07:15:05 +0400 2012;#bar
+    Thu Sep 27 07:25:05 +0400 2012;stop
 
 ## Helpers
 
@@ -84,20 +84,18 @@ To ease evaluation of traq-files `traq` comes with two helper scripts, `traqtran
 `traqtrans` transforms the timestamp into a unix timestamp,
 and `traqeval` sums up tags.
 
-```
-$ traq -p test -w 39 | traqtrans
-1348715105;#foo
-1348715705;#bar
-1348716305;stop
-%%
-```
+    $ traq -p test -w 39 | traqtrans
+    1348715105;#foo
+    1348715705;#bar
+    1348716305;stop
+    %%
 
 Pipe both together and you'll get something like this:
 
-```
-$ traq -p test -w 39 | traqtrans | traqeval
-2012-09-27
-#foo:0.16666666666666666
-#bar:0.16666666666666666
-%%
-```
+    $ traq -p test -w 39 | traqtrans | traqeval
+    2012-09-27
+    #foo:0.16666666666666666
+    #bar:0.16666666666666666
+    %%
+
+[1]:http://mxcl.github.com/homebrew/
