@@ -2,6 +2,18 @@
 
 . $TRAQ_PATH/os_helper.sh
 
+if [ `is_osx` ]
+then
+  TRAQ_DATA_DIR="~/Library/traq"
+else
+  if [ -z "$XDG_DATA_HOME" ]
+  then
+    XDG_DATA_HOME="~/.local/share"
+  fi
+
+  TRAQ_DATA_DIR="$XDG_DATA_HOME/traq"
+fi
+
 # converts a date into the corresponding week number
 function week_number() {
   is_osx
@@ -89,7 +101,7 @@ function traq() {
     DATE='*'
   fi
 
-  local TRAQFILE="$HOME/.traq/$PROJECT/$YEAR/$(today_file "$DATE" "$WEEK")"
+  local TRAQFILE="$TRAQ_DATA_DIR/$PROJECT/$YEAR/$(today_file "$DATE" "$WEEK")"
 
   if [ "$TAG" = "" ]; then # no tag was given; output the content
     for FILE in $TRAQFILE
