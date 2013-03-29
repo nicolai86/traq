@@ -86,11 +86,14 @@ function traq() {
 
   local TRAQFILE="$TRAQ_DATA_DIR/$PROJECT/$YEAR/$(today_file "$DATE" "$WEEK")"
 
-  if [ "$TAG" = "" ]; then # no tag was given; output the content
+  if [ "$TAG" = "" ]; then
+    # no tag was given; output the content, but only if the file exists
     for FILE in $TRAQFILE
     do
-      cat $FILE
-      printf "%%%%\n"
+      if [ -f $FILE ]; then
+        cat $FILE
+        printf "%%%%\n"
+      fi
     done
   else # tag was given; handle tag
     if [ "$WEEK" = "" -a "$DATE" = "" ]

@@ -8,18 +8,20 @@ Requires bash v4.2.39 or newer. Works on Linux and OS X
 
 `traq` assumes you're installing it to your home directory, into `~/.traq`. This will set you up:
 
-    $ mkdir $HOME/.traq
-    $ mkdir -p $HOME/Library/traq
-    $ git clone git@github.com:nicolai86/traq.git ~/.traq
-    $ echo "export TRAQ_PATH=$HOME/.traq" >> ~/.bash_profile
-    $ echo "export TRAQ_DATA_DIR=$HOME/Library/traq" >> ~/.bash_profile
-    $ echo "export PATH=$PATH:$HOME/.traq" >> ~/.bash_profile
-    $ . ~/.bash_profile
-    $ which traq
+``` bash
+$ mkdir $HOME/.traq
+$ mkdir -p $HOME/Library/traq
+$ git clone git@github.com:nicolai86/traq.git ~/.traq
+$ echo "export TRAQ_PATH=$HOME/.traq" >> ~/.bash_profile
+$ echo "export TRAQ_DATA_DIR=$HOME/Library/traq" >> ~/.bash_profile
+$ echo "export PATH=$PATH:$HOME/.traq" >> ~/.bash_profile
+$ . ~/.bash_profile
+$ which traq
+```
 
 To update your installation all you need to do is to
 
-```
+``` bash
 $ cd $HOME/.traq/traq
 $ git pull origin master
 ```
@@ -30,33 +32,47 @@ $ git pull origin master
 
 If you have `bash-completion` installed you can setup bash completion for traq as well. This example assumes you are using [HomeBrew][1] and have `bash-completion` installed.
 
-    $ ln -s $TRAQ_PATH/traq_completion.sh $(brew --prefix)/etc/bash_completion.d/traq
+``` bash
+$ ln -s $TRAQ_PATH/traq_completion.sh $(brew --prefix)/etc/bash_completion.d/traq
+```
 
 Ubuntu users can do the following:
 
-    $ sudo apt-get install bash-completion
-    $ echo ". $TRAQ_PATH/traq_completion.sh" >> ~/.bash_profile
+``` bash
+$ sudo apt-get install bash-completion
+$ echo ". $TRAQ_PATH/traq_completion.sh" >> ~/.bash_profile
+```
 
 ## Tests
 
 The project has some tests using [bats](https://github.com/sstephenson/bats). Assuming you got `bats` installed, run them using the following command:
 
-```
-cd $TRAQ_PATH
-bats tests/
+``` bash
+$ cd $TRAQ_PATH
+$ bats tests/
 ```
 
 ## Usage
 
-`$ traq foo`: creates an entry for #foo at todays date
+``` bash
+# start time tracking for #project
+$ traq project
 
-`$ traq stop`: appends the special stop delimiter to todays file
+# start time tracking for #project with the comment 'working on the landing page'
+$ traq project working on the landing page
 
-`$ traq`: echo the content of todays file to stdout. If the file does not exist, nothing is echoed.
+# stop time tracking
+$ traq stop
 
-`$ traq -d 2012-07-30` echo the content of the file from the given date to stdout. If the file does not exist, nothing is echoed.
+# echo the content of todays file to stdout. If the file does not exist, nothing is echoed.
+$ traq
 
-`$ traq -w 31` echo the content of all files from the calendar week 31 to stdout. If the week does not contain files, nothing is echoed.
+# echo the content of the file from the given date to stdout. If the file does not exist, nothing is echoed.
+$ traq -d 2012-07-30
+
+# echo the content of all files from the calendar week 31 to stdout. If the week does not contain files, nothing is echoed.
+$ traq -w 31
+```
 
 ## Hacking
 
