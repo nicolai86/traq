@@ -98,7 +98,7 @@ or, if `-p <project>` was given, under
 Each file can contain multiple lines of the following format:
 
 
-    <timestamp>;<tag>
+    <timestamp>;<tag>;<comment>
 
 
 Here's some sample content:
