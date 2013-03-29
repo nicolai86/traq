@@ -69,6 +69,16 @@ function traq_entry() {
   printf "$(traq_timestamp);$(traq_tag $TAG);$COMMENT"
 }
 
+# echos the content of a file with delimiter
+function print_traq_file() {
+  local FILE=$1
+
+  if [ -f $FILE ]; then
+    cat $FILE
+    printf "%%%%\n"
+  fi
+}
+
 # traq logic.
 function traq() {
   local TAG=$1
@@ -98,10 +108,7 @@ function traq() {
     # no tag was given; output the content, but only if the file exists
     for FILE in $TRAQFILE
     do
-      if [ -f $FILE ]; then
-        cat $FILE
-        printf "%%%%\n"
-      fi
+      print_traq_file "$FILE"
     done
   else
     # tag was given; handle tag

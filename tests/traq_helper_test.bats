@@ -41,3 +41,15 @@
   result="$(traq_entry "stop" "this is a comment")"
   [ "$result" = "$(traq_timestamp);stop;this is a comment" ]
 }
+
+@test "print_traq_file - without existing file prints nothing" {
+  run print_traq_file "./barf"
+  [ "$output" = "" ]
+}
+
+@test "print_traq_file - prints content and delimiter" {
+  run print_traq_file "$BATS_TEST_DIRNAME/data/timestamps-2013-03-23"
+  [ ${lines[0]} = "Sat Mar 23 15:08:22 +0100 2013;#development;comment" ]
+  [ ${lines[1]} = "Sat Mar 23 16:34:45 +0100 2013;stop;" ]
+  [ ${lines[2]} = "%%" ]
+}
