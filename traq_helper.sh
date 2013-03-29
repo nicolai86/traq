@@ -95,7 +95,8 @@ function traq() {
         printf "%%%%\n"
       fi
     done
-  else # tag was given; handle tag
+  else
+    # tag was given; handle tag
     if [ "$WEEK" = "" -a "$DATE" = "" ]
     then
       mkdir -p $(dirname $TRAQFILE)
