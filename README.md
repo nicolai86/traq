@@ -4,6 +4,34 @@ bash based time tracking using text files
 
 Requires bash v4.2.39 or newer. Works on Linux and OS X
 
+## Usage examples
+
+``` bash
+# start time tracking for #project
+$ traq project
+
+# start time tracking for #project with the comment 'working on the landing page'
+$ traq project working on the landing page
+
+# stop time tracking
+$ traq stop
+
+# echo the content of todays file to stdout. If the file does not exist, nothing is echoed.
+$ traq
+
+# echo the content of the file from the given date to stdout. If the file does not exist, nothing is echoed.
+$ traq -d 2012-07-30
+
+# echo the content of all files from the calendar week 31 to stdout. If the week does not contain files, nothing is echoed.
+$ traq -w 31
+
+# starts time tracking for client-a on #development
+$ traq -p client-a development
+
+# stops time tracking for client-a
+$ traq -p client-a stop
+```
+
 ## Installation
 
 `traq` assumes you're installing it to your home directory, into `~/.traq`. This will set you up:
@@ -50,28 +78,6 @@ The project has some tests using [bats](https://github.com/sstephenson/bats). As
 ``` bash
 $ cd $TRAQ_PATH
 $ bats tests/
-```
-
-## Usage
-
-``` bash
-# start time tracking for #project
-$ traq project
-
-# start time tracking for #project with the comment 'working on the landing page'
-$ traq project working on the landing page
-
-# stop time tracking
-$ traq stop
-
-# echo the content of todays file to stdout. If the file does not exist, nothing is echoed.
-$ traq
-
-# echo the content of the file from the given date to stdout. If the file does not exist, nothing is echoed.
-$ traq -d 2012-07-30
-
-# echo the content of all files from the calendar week 31 to stdout. If the week does not contain files, nothing is echoed.
-$ traq -w 31
 ```
 
 ## Hacking
