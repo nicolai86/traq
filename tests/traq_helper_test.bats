@@ -26,3 +26,18 @@
   result="$(today_file '*' "50")"
   [ "$result" = "kw-50/timestamps-*" ]
 }
+
+@test "traq_entry - returns timestamp with tag if comment is empty" {
+  result="$(traq_entry "example")"
+  [ "$result" = "$(traq_timestamp);#example;" ]
+}
+
+@test "traq_entry - returns timestamp, tag and comment" {
+  result="$(traq_entry "example" "this is a comment")"
+  [ "$result" = "$(traq_timestamp);#example;this is a comment" ]
+}
+
+@test "traq_entry - works with stop as well" {
+  result="$(traq_entry "stop" "this is a comment")"
+  [ "$result" = "$(traq_timestamp);stop;this is a comment" ]
+}

@@ -61,6 +61,14 @@ function today_file() {
   printf "kw-$WEEK_NUMBER/timestamps-$DATE"
 }
 
+# creates a traq entry
+function traq_entry() {
+  local TAG=$1
+  local COMMENT=$2
+
+  printf "$(traq_timestamp);$(traq_tag $TAG);$COMMENT"
+}
+
 # traq logic.
 function traq() {
   local TAG=$1
@@ -100,7 +108,7 @@ function traq() {
     if [ "$WEEK" = "" -a "$DATE" = "" ]
     then
       mkdir -p $(dirname $TRAQFILE)
-      printf "$(traq_timestamp);$(traq_tag $TAG);$COMMENT\n" >> $TRAQFILE
+      printf "$(traq_entry "$TAG" "$COMMENT")\n" >> $TRAQFILE
     else
       printf "can not combine -d or -w with a tag\n" 1>&2
     fi
