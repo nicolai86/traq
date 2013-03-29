@@ -24,7 +24,6 @@ set +e
 . $TRAQ_PATH/traq_helper.sh
 
 PROJECT="timestamps"
-VERBOSE=
 DATE=
 WEEK=
 while getopts ":p:d:w::v" opt "$@"
@@ -32,9 +31,6 @@ do
   case $opt in
     p)
       PROJECT="$OPTARG"
-      ;;
-    v)
-      VERBOSE=yes
       ;;
     d)
       DATE="$OPTARG"
