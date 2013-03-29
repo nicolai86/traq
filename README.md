@@ -30,6 +30,9 @@ $ traq -p client-a development
 
 # stops time tracking for client-a
 $ traq -p client-a stop
+
+# list tracked times for client-a from today
+$ traq -p client-a
 ```
 
 ## Installation
