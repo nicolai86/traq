@@ -35,6 +35,28 @@ $ traq -p client-a stop
 $ traq -p client-a
 ```
 
+## Evaluation
+
+To ease evaluation of traq-files `traq` comes with two helper scripts, `traqtrans` and `traqeval`.
+
+`traqtrans` transforms the timestamp into a unix timestamp,
+and `traqeval` sums up tags.
+
+    $ traq -p test -w 39 | traqtrans
+    1348715105;#foo
+    1348715705;#bar
+    1348716305;stop
+    %%
+
+Pipe both together and you'll get something like this:
+
+    $ traq -p test -w 39 | traqtrans | traqeval
+    2012-09-27
+    #foo:0.1666
+    #bar:0.1666
+    %%
+
+
 ## Installation
 
 `traq` assumes you're installing it to your home directory, into `~/.traq`. This will set you up:
@@ -106,26 +128,5 @@ Here's some sample content:
     Thu Sep 27 07:05:05 +0400 2012;#foo;
     Thu Sep 27 07:15:05 +0400 2012;#bar;
     Thu Sep 27 07:25:05 +0400 2012;stop;
-
-## Helpers
-
-To ease evaluation of traq-files `traq` comes with two helper scripts, `traqtrans` and `traqeval`.
-
-`traqtrans` transforms the timestamp into a unix timestamp,
-and `traqeval` sums up tags.
-
-    $ traq -p test -w 39 | traqtrans
-    1348715105;#foo
-    1348715705;#bar
-    1348716305;stop
-    %%
-
-Pipe both together and you'll get something like this:
-
-    $ traq -p test -w 39 | traqtrans | traqeval
-    2012-09-27
-    #foo:0.1666
-    #bar:0.1666
-    %%
 
 [1]:http://mxcl.github.com/homebrew/
