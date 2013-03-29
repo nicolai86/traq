@@ -67,6 +67,7 @@ function traq() {
   local DATE=$2
   local WEEK=$3
   local PROJECT=$4
+  local COMMENT=$5
   local YEAR=$(current_year)
 
   # no arguments given. use todays date to output
@@ -95,7 +96,7 @@ function traq() {
     if [ "$WEEK" = "" -a "$DATE" = "" ]
     then
       mkdir -p $(dirname $TRAQFILE)
-      printf "$(traq_timestamp);$(traq_tag $TAG)\n" >> $TRAQFILE
+      printf "$(traq_timestamp);$(traq_tag $TAG);$COMMENT\n" >> $TRAQFILE
     else
       printf "can not combine -d or -w with a tag\n" 1>&2
     fi

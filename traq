@@ -49,5 +49,7 @@ do
 done
 shift $(($OPTIND - 1))
 
-TAG=$@
-traq "$TAG" "$DATE" "$WEEK" "$PROJECT"
+TAG=$1
+shift
+COMMENT=$@
+traq "$TAG" "$DATE" "$WEEK" "$PROJECT" "$COMMENT"
