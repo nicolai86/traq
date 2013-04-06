@@ -8,12 +8,25 @@ set +e
 
 . $TRAQ_PATH/traqtrans_helper.sh
 
+FILE="$@"
+if [ "$FILE" != "" ]; then
+  exec<$FILE
+fi
+
+separator() {
+  printf "%%%%\n"
+}
+
 while read LINE
 do
   if [ "$LINE" != "%%" ]
   then
     printf "$(date2timestamp "$(extract_date "$LINE")");$(extract_tag $LINE)\n"
   else
-    printf "%%%%\n"
+    separator
   fi
 done
+
+if [ "$FILE" != "" ]; then
+  separator
+fi
