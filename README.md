@@ -125,7 +125,7 @@ Each file can contain multiple lines of the following format:
 
 Here's some sample content:
 
-    Thu Sep 27 07:05:05 +0400 2012;#foo;
+    Thu Sep 27 07:05:05 +0400 2012;#foo;Worked on Foo
     Thu Sep 27 07:15:05 +0400 2012;#bar;
     Thu Sep 27 07:25:05 +0400 2012;stop;
 
