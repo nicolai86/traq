@@ -27,6 +27,20 @@ function _traq() {
       return 0
       ;;
 
+    # month flag was entered. suggest the current month
+    -m)
+      local current_month=$(date "+%m")
+      COMPREPLY=( $(compgen -W "$current_month" -- $cur) )
+      return 0
+      ;;
+
+    # year flag was entered. suggest the current year
+    -y)
+      local current_year=$(date "+%Y")
+      COMPREPLY=( $(compgen -W "$current_year" -- $cur) )
+      return 0
+      ;;
+
     # week flag was entered. suggest the current week
     -w)
       local week_number=$(date "+%V")

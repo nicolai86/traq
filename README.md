@@ -25,6 +25,12 @@ $ traq -d 2012-07-30
 # echo the content of all files from the calendar week 31 to stdout. If the week does not contain files, nothing is echoed.
 $ traq -w 31
 
+# echo the content of all files in february of the current year
+$ traq -m 2
+
+# echo the content of all files in september 2012
+$ traq -m 9 -y 2012
+
 # starts time tracking for client-a on #development
 $ traq -p client-a development
 

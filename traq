@@ -1,24 +1,4 @@
 #!/usr/bin/env bash
-#
-# traq
-# simple time tracking using files, organized by calendar week
-#
-# example usage:
-# `traq foo`:
-#    creates an entry for #foo at todays date, e.g. `Mon Jul 30 08:35:42 CEST 2012 #foo`
-#    the corresponding file resides at ~/.traq/timestamps/kw-31/timestamps-2012-07-30
-# `traq stop`:
-#    appends the special stop delimitor to todays file, e.g. `Mon Jul 30 08:35:42 CEST 2012 stop`
-# `traq`:
-#    echo the content of todays file to stdout. If the file does not exist, nothing is echoed.
-# `traq -d 2012-07-30`:
-#    echo the content of the file from the given date to stdout. If the file does not exist, nothing is echoed.
-# `traq -w 31`:
-#    echo the content of all files from the calendar week 31 to stdout. If the week does not contain files, nothing is echoed.
-# optional you can pass -g to all examples, which will cause the file to be placed at
-# at ~/.traq/<group>/kw-31/timestamps-2012-07-30
-#
-
 set +e
 
 . $TRAQ_PATH/traq_helper.sh
@@ -26,7 +6,9 @@ set +e
 PROJECT="timestamps"
 DATE=
 WEEK=
-while getopts ":p:d:w::v" opt "$@"
+MONTH=
+YEAR=
+while getopts ":p:d:w:m:y::v" opt "$@"
 do
   case $opt in
     p)
@@ -37,6 +19,12 @@ do
       ;;
     w)
       WEEK="$OPTARG"
+      ;;
+    m)
+      MONTH="$OPTARG"
+      ;;
+    y)
+      YEAR="$OPTARG"
       ;;
     \?)
       printf "Invalid option: -$OPTARG\n" >&2
@@ -52,4 +40,31 @@ shift $(($OPTIND - 1))
 TAG=$1
 shift
 COMMENT=$@
-traq "$TAG" "$DATE" "$WEEK" "$PROJECT" "$COMMENT"
+
+if [ "$MONTH" == "" ]
+then
+  traq "$TAG" "$DATE" "$WEEK" "$PROJECT" "$COMMENT"
+else
+  # we default to the current year if not provided
+  if [ "$YEAR" == "" ]
+  then
+    YEAR=$(date +"%Y")
+  fi
+
+  # properly calculate the last day in the provided month
+  OFFSET_MONTH=$(echo "$MONTH + 1" | bc)
+  OFFSET_YEAR=$YEAR
+  if [ "$OFFSET_MONTH" -gt 12 ]
+  then
+    OFFSET_MONTH=1
+    OFFSET_YEAR=$(echo "$YEAR + 1" | bc)
+  fi
+  last_day_in_month=$(date -v${OFFSET_YEAR}y -v${OFFSET_MONTH}m -v1d -v-1d +"%d")
+
+  # execute traq for each date
+  for i in $(seq 1 $last_day_in_month)
+  do
+    DAY_DATE=$(date -v${YEAR}y -v${MONTH}m -v${i}d +"%Y-%m-%d")
+    traq "$TAG" "$DAY_DATE" "" "$PROJECT" ""
+  done
+fi
