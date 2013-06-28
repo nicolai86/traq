@@ -1,3 +1,9 @@
+# v0.3
+
+- traq now supports month and year batch printing of tracked times
+  use -m to provide a month and -y to provide a year. You can also just
+  use -m for the current month
+
 # v0.2.1
 
 - traqtrans works with pipes or file as first argument

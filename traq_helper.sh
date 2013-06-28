@@ -97,6 +97,7 @@ function traq() {
     WEEK="$(week_number $DATE)"
     YEAR="$(year_number $DATE)"
   fi
+
   # week given. use glob
   if [ "$DATE" = "" -a "$TAG" = "" -a "$WEEK" != "" ]; then
     DATE='*'
