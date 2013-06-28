@@ -2,7 +2,7 @@
 
 bash based time tracking using text files
 
-Requires bash v4.2.39 or newer. Works on Linux and OS X
+Requires bash v3.2 or newer. Works on Linux and OS X
 
 ## Usage examples
 
