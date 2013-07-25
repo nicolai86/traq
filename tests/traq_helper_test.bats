@@ -53,3 +53,9 @@
   [ ${lines[1]} = "Sat Mar 23 16:34:45 +0100 2013;stop;" ]
   [ ${lines[2]} = "%%" ]
 }
+
+@test "print_traq_file - cancels trailing tags" {
+  run print_traq_file "$BATS_TEST_DIRNAME/fixtures/timestamps-2013-07-25"
+  [ ${lines[0]} = "Thu Jul 25 23:00:00 +0200 2013;#work;" ]
+  [ ${lines[1]} = "Thu Jul 25 23:00:00 +0200 2013;stop;" ]
+}

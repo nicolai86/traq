@@ -69,12 +69,24 @@ function traq_entry() {
   printf "$(traq_timestamp);$(traq_tag $TAG);$COMMENT"
 }
 
+function cancel_invalid_trailing_entry() {
+  local FILE=$1
+
+  local LAST_LINE=$(cat $FILE | tail -n 1)
+  local LAST_TAG=$(echo "$LAST_LINE" | cut -d';' -f2)
+
+  if [ "$LAST_TAG" != "stop" ]; then
+    echo  $LAST_LINE | sed "s/$LAST_TAG/stop/"
+  fi
+}
+
 # echos the content of a file with delimiter
 function print_traq_file() {
   local FILE=$1
 
   if [ -f $FILE ]; then
     cat $FILE
+    cancel_invalid_trailing_entry "$FILE"
     printf "%%%%\n"
   fi
 }
