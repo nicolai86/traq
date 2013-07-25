@@ -1,3 +1,8 @@
+# v0.4
+
+- automatically cancel trailing tags to ensure that traqeval does not calculate invalid
+  durations
+
 # v0.3
 
 - traq now supports month and year batch printing of tracked times
