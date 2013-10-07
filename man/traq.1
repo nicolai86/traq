@@ -1,0 +1,86 @@
+.TH traq 1 "07 October 2013"
+
+.SH NAME
+bash based time tracking & evaluation
+
+.SH SYNOPSIS
+traq [options] [command or project]
+
+.SH DESCRIPTION
+A description of what the program does—as long as     is necessary.
+
+.SH OPTIONS
+.TP
+.BI \-d " date"
+print out stored informations for a given \fIdate\fR.
+Can be combined with \fI\-p\fR to specify a single client.
+
+.TP
+.BI \-p " client"
+track time for a given \fIclient\fR. Omit for default
+
+.TP
+.BI \-m " month"
+print out stored informations for a given \fImonth\fR.
+To specify a different year combine with \fI\-y\fR.
+
+.TP
+.BI \-w " week"
+print out stored informations for a given \fIweek\fR.
+To specify a different year combine with \fI\-y\fR.
+
+.TP
+.BI \-y " year"
+change the year used by \fI\-m\fR
+or \fI\-w\fR.
+
+.SH EXAMPLES
+To start tracking traq accepts a project you are working on:
+.br
+$ traq project
+
+To stop tracking traq recognizes a special keyword called stop:
+.br
+$ traq stop
+
+You can add comments to your tracked entries:
+.br
+$ traq project 'working on the landing page'
+
+If you want to see which events you tracked today just call traq without arguments:
+.br
+$ traq
+
+You can inspect dates/ weeks and months from the past:
+.br
+$ traq -d 2012-07-30
+.br
+$ traq -w 31
+.br
+$ traq -m 2
+
+If you need to specify a different year
+.br
+$ traq -m 9 -y 2012
+
+To tell traq to clock on different clients you can use \fI-p\fR:
+.br
+$ traq -p aClient development
+
+Of course you can combine most options:
+.br
+$ traq -p aClient -y 2013 -m 02
+
+.SH ENVIRONMENT
+.TP
+.BI TRAQ_PATH
+the location where your traq installation resides. Defaults to $HOME/.traq
+.TP
+.BI TRAQ_DATA_DIR
+the location where traq stores your files. Defaults to $HOME/Library/traq
+
+.SH FILES
+By default traq writes events to files located under $TRAQ_DATA_DIR. The directory needs to be read- and writeable for the current user. traq manages the data directory on its own.
+
+.SH AUTHOR
+Raphael Randschau <nicolai86@me.com>

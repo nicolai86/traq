@@ -74,6 +74,7 @@ $ git clone git@github.com:nicolai86/traq.git ~/.traq
 $ echo "export TRAQ_PATH=$HOME/.traq" >> ~/.bash_profile
 $ echo "export TRAQ_DATA_DIR=$HOME/Library/traq" >> ~/.bash_profile
 $ echo "export PATH=$PATH:$HOME/.traq" >> ~/.bash_profile
+$ ln -s $HOME/.traq/man/traq.1 /usr/local/share/man/man1/traq.1
 $ . ~/.bash_profile
 $ which traq
 ```
