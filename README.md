@@ -103,6 +103,28 @@ $ sudo apt-get install bash-completion
 $ echo ". $TRAQ_PATH/traq_completion.sh" >> ~/.bash_profile
 ```
 
+## Migration to v0.5
+
+traq 0.5 has a different, flatter directory structure. Instead of one directory per year week of the year,
+we now only have one directory per year.
+
+The following bash script helps you migrate your data:
+
+```bash
+for directory in $(find $HOME/Library/traq -maxdepth 1 -mindepth 1 -type d); do
+  echo $directory
+  for year in $(find $directory -maxdepth 1 -mindepth 1 -type d); do
+    for week in $(find $year -maxdepth 1 -mindepth 1 -type d); do
+      for file in $(find $week -maxdepth 1 -mindepth 1 -type f); do
+        cleanfile="${file//timestamps-/}"
+        mv "$file" "$year/${cleanfile##*/}"
+      done
+      rm -fr $week
+    done
+  done
+done
+```
+
 ## Tests
 
 The project has some tests using [bats](https://github.com/sstephenson/bats). Assuming you got `bats` installed, run them using the following command:
