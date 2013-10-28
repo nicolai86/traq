@@ -87,13 +87,4 @@ func main() {
   } else {
     writeToFile(project, now, command)
   }
-
-  // fmt.Print("traq configuration:\n")
-  // fmt.Print("data path: ", traqPath, "\n")
-  // fmt.Print("year: ", year, "\n")
-  // fmt.Print("month: ", month, "\n")
-  // fmt.Print("day: ", day, "\n")
-  // fmt.Print("date: ", date, "\n")
-  // fmt.Print("project: ", project, "\n")
-  // fmt.Print("command: ", command, "\n")
 }
