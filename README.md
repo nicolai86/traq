@@ -4,18 +4,6 @@ bash based time tracking using text files
 
 Requires bash v3.2 or newer. Works on Linux and OS X
 
-## Build instructions
-
-``` bash
-$ go build traq.go
-```
-
-## Go Formatting
-
-``` bash
-$ gofmt -tabs=false -tabwidth=2 -w traq.go
-```
-
 ## Usage examples
 
 ``` bash
@@ -71,7 +59,6 @@ Pipe both together and you'll get something like this:
     #bar:0.1666
     %%
 
-
 ## Installation
 
 `traq` assumes you're installing it to your home directory, into `~/.traq`. This will set you up:
@@ -82,21 +69,30 @@ $ mkdir -p $HOME/Library/traq
 $ git clone git@github.com:nicolai86/traq.git ~/.traq
 $ echo "export TRAQ_PATH=$HOME/.traq" >> ~/.bash_profile
 $ echo "export TRAQ_DATA_DIR=$HOME/Library/traq" >> ~/.bash_profile
-$ echo "export PATH=$PATH:$HOME/.traq" >> ~/.bash_profile
+$ echo "export PATH=$PATH:$HOME/.traq/bin" >> ~/.bash_profile
 $ ln -s $HOME/.traq/man/traq.1 /usr/local/share/man/man1/traq.1
 $ . ~/.bash_profile
 $ which traq
 ```
 
-To update your installation all you need to do is to
+### Build instructions
+
+Make sure your `$GOPATH` is set up properly. Then link traq properly:
 
 ``` bash
-$ cd $HOME/.traq/traq
-$ git pull origin master
+$ mkdir -p $HOME/go/src
+$ ln -s $HOME/.traq/src/ $HOME/go/src/traq
 ```
 
-**Linux Note** `traqeval` requires `bc` to be available. If `which bc` returns nothing you need install `bc` via `aptitude` or whatever package manager you're using.
+``` bash
+$ go build -o bin/traq app.go
+```
 
+### Go Formatting
+
+``` bash
+$ gofmt -tabs=false -tabwidth=2 -w traq.go
+```
 ## Bash Completion
 
 If you have `bash-completion` installed you can setup bash completion for traq as well. This example assumes you are using [HomeBrew][1] and have `bash-completion` installed.
@@ -134,26 +130,17 @@ for directory in $(find $HOME/Library/traq -maxdepth 1 -mindepth 1 -type d); do
 done
 ```
 
-## Tests
-
-The project has some tests using [bats](https://github.com/sstephenson/bats). Assuming you got `bats` installed, run them using the following command:
-
-``` bash
-$ cd $TRAQ_PATH
-$ bats tests/
-```
-
 ## Hacking
 
 All files are placed under
 
-    $ $TRAQ_DATA_DIR/timestamps/<current year>/kw-<week number>/timestamps-<date>
-    # eg $TRAQ_DATA_DIR/timestamps/2012/kw-50/timestamps-2012-12-12
+    $ $TRAQ_DATA_DIR/timestamps/<current year>/<year>-<month>-<day>
+    # eg $TRAQ_DATA_DIR/timestamps/2012/2012-12-12
 
 or, if `-p <project>` was given, under
 
-    $ $TRAQ_DATA_DIR/<project>/<current year>/kw-<week number>/timestamps-<date>
-    # eg $TRAQ_DATA_DIR/client-a/2012/kw-50/timestamps-2012-12-12
+    $ $TRAQ_DATA_DIR/<project>/<current year>/<year>-<month>-<day>
+    # eg $TRAQ_DATA_DIR/client-a/2012/2012-12-12
 
 Each file can contain multiple lines of the following format:
 

@@ -5,7 +5,6 @@ import (
   "io/ioutil"
   "os"
   "time"
-  // "path/filepath"
 )
 
 var traqPath string = os.Getenv("TRAQ_DATA_DIR")
