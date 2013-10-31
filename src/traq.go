@@ -1,4 +1,4 @@
-package main
+package traq
 
 import (
   "flag"
@@ -16,21 +16,23 @@ var day int
 var project string = "timestamps"
 var date string
 
-func printFile(project string, date time.Time) {
-  var traqFile = fmt.Sprintf("%s/%s/%d/%d-%02d-%02d", traqPath, project, date.Year(), date.Year(), date.Month(), date.Day())
-  var content, error = ioutil.ReadFile(traqFile)
+func FilePath(project string, date time.Time) (path string) {
+  return fmt.Sprintf("%s/%s/%d/%d-%02d-%02d", traqPath, project, date.Year(), date.Year(), date.Month(), date.Day())
+}
+
+func PrintFile(project string, date time.Time) {
+  var content, error = ioutil.ReadFile(FilePath(project, date))
+
   if error == nil {
     fmt.Print(string(content))
     fmt.Println("%%")
-  } else {
-    // fmt.Println(traqFile, " is unknown")
   }
 }
 
-func printMonth(project string, year int, month int) {
+func PrintMonth(project string, year int, month int) {
   var startDate time.Time = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
   for {
-    printFile(project, startDate)
+    PrintFile(project, startDate)
     startDate = startDate.Add(time.Hour * 24)
     if int(startDate.Month()) != month {
       break
@@ -38,9 +40,8 @@ func printMonth(project string, year int, month int) {
   }
 }
 
-func writeToFile(project string, date time.Time, command string) {
-  var traqFile = fmt.Sprintf("%s/%s/%d/%d-%02d-%02d", traqPath, project, date.Year(), date.Year(), date.Month(), date.Day())
-  var file, error = os.OpenFile(traqFile, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
+func WriteToFile(project string, date time.Time, command string) {
+  var file, error = os.OpenFile(FilePath(project, date), os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
   if error == nil {
     var line = fmt.Sprintf("%s;%s;%s\n", date.Format("Mon Jan 2 15:04:05 -0700 2006"), command, "")
     file.WriteString(line)
@@ -84,11 +85,11 @@ func main() {
 
   if command == "" {
     if date == "" {
-      printMonth(project, year, month)
+      PrintMonth(project, year, month)
     } else {
-      printFile(project, t)
+      PrintFile(project, t)
     }
   } else {
-    writeToFile(project, now, command)
+    WriteToFile(project, now, command)
   }
 }

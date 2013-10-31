@@ -13,7 +13,7 @@ $ go build traq.go
 ## Go Formatting
 
 ``` bash
-$ go -tabs=false -tabwidth=2 -w traq.go
+$ gofmt -tabs=false -tabwidth=2 -w traq.go
 ```
 
 ## Usage examples
