@@ -1,3 +1,9 @@
+# v0.5
+
+- remove option to print times for a given week
+- change directory structure of stored timestamps
+- rewrite traq in go
+
 # v0.4
 
 - automatically cancel trailing tags to ensure that traqeval does not calculate invalid
