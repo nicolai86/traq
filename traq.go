@@ -83,7 +83,11 @@ func main() {
   }
 
   if command == "" {
-    printMonth(project, year, month)
+    if date == "" {
+      printMonth(project, year, month)
+    } else {
+      printFile(project, t)
+    }
   } else {
     writeToFile(project, now, command)
   }
