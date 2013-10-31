@@ -4,6 +4,18 @@ bash based time tracking using text files
 
 Requires bash v3.2 or newer. Works on Linux and OS X
 
+## Build instructions
+
+``` bash
+$ go build traq.go
+```
+
+## Go Formatting
+
+``` bash
+$ go -tabs=false -tabwidth=2 -w traq.go
+```
+
 ## Usage examples
 
 ``` bash
