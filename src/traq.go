@@ -1,7 +1,6 @@
 package traq
 
 import (
-  "flag"
   "fmt"
   "io/ioutil"
   "os"
@@ -10,11 +9,6 @@ import (
 )
 
 var traqPath string = os.Getenv("TRAQ_DATA_DIR")
-var month int
-var year int
-var day int
-var project string = "timestamps"
-var date string
 
 func FilePath(project string, date time.Time) (path string) {
   return fmt.Sprintf("%s/%s/%d/%d-%02d-%02d", traqPath, project, date.Year(), date.Year(), date.Month(), date.Day())
@@ -46,50 +40,5 @@ func WriteToFile(project string, date time.Time, command string) {
     var line = fmt.Sprintf("%s;%s;%s\n", date.Format("Mon Jan 2 15:04:05 -0700 2006"), command, "")
     file.WriteString(line)
     file.Close()
-  }
-}
-
-func main() {
-  flag.IntVar(&year, "y", 0, "print tracked times for a given year")
-  flag.IntVar(&month, "m", 0, "print tracked times for a given month")
-
-  flag.StringVar(&date, "d", "", "print tracked times for a given date")
-  flag.StringVar(&project, "p", "", "print data for a given project")
-
-  flag.Parse()
-
-  var now = time.Now()
-  var t, error = time.Parse("2006-01-02", date)
-  if error == nil {
-    year = t.Year()
-    month = int(t.Month())
-    day = t.Day()
-  } else {
-    if month == 0 && year == 0 {
-      day = now.Day()
-    } else {
-      day = 1
-    }
-    if year == 0 {
-      year = now.Year()
-    }
-    if month == 0 {
-      month = int(now.Month())
-    }
-  }
-
-  var command string = flag.Arg(0)
-  if command != "" && command != "stop" {
-    command = "#" + command
-  }
-
-  if command == "" {
-    if date == "" {
-      PrintMonth(project, year, month)
-    } else {
-      PrintFile(project, t)
-    }
-  } else {
-    WriteToFile(project, now, command)
   }
 }
