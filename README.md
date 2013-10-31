@@ -34,9 +34,6 @@ $ traq
 # echo the content of the file from the given date to stdout. If the file does not exist, nothing is echoed.
 $ traq -d 2012-07-30
 
-# echo the content of all files from the calendar week 31 to stdout. If the week does not contain files, nothing is echoed.
-$ traq -w 31
-
 # echo the content of all files in february of the current year
 $ traq -m 2
 
@@ -60,7 +57,7 @@ To ease evaluation of traq-files `traq` comes with two helper scripts, `traqtran
 `traqtrans` transforms the timestamp into a unix timestamp,
 and `traqeval` sums up tags.
 
-    $ traq -p test -w 39 | traqtrans
+    $ traq -p test | traqtrans
     1348715105;#foo
     1348715705;#bar
     1348716305;stop
@@ -68,7 +65,7 @@ and `traqeval` sums up tags.
 
 Pipe both together and you'll get something like this:
 
-    $ traq -p test -w 39 | traqtrans | traqeval
+    $ traq -p test | traqtrans | traqeval
     2012-09-27
     #foo:0.1666
     #bar:0.1666
