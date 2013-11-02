@@ -5,6 +5,7 @@ import (
   "io/ioutil"
   "os"
   "time"
+  "strings"
 )
 
 var traqPath string = os.Getenv("TRAQ_DATA_DIR")
@@ -13,7 +14,45 @@ func FilePath(project string, date time.Time) (path string) {
   return fmt.Sprintf("%s/%s/%d/%d-%02d-%02d", traqPath, project, date.Year(), date.Year(), date.Month(), date.Day())
 }
 
-func PrintFile(project string, date time.Time) {
+func SumFile(content string) (map[string]int64, error) {
+  var totalled map[string]int64 = make(map[string]int64)
+
+  var lines []string = strings.Split(content, "\n")
+  var currentTag string = ""
+  var currentTime time.Time
+
+  for _, line := range lines {
+    if line != "" {
+      var parts []string = strings.Split(line, ";")
+
+      var t, error = time.Parse("Mon Jan 2 15:04:05 -0700 2006", parts[0])
+      if error == nil {
+        if parts[1] == "" {
+          currentTag = parts[1]
+          totalled[currentTag] = 0
+        } else if parts[1] == "stop" {
+          var diff = t.Unix() - currentTime.Unix()
+          totalled[currentTag] = totalled[currentTag] + diff
+          currentTag = ""
+        } else if currentTag != parts[1] {
+          var diff = t.Unix() - currentTime.Unix()
+          totalled[currentTag] = totalled[currentTag] + diff
+          currentTag = parts[1]
+        }
+
+        currentTime = t
+      } else {
+        return totalled, error
+      }
+    }
+  }
+
+  delete(totalled, "")
+
+  return totalled, nil
+}
+
+func PrintDate(project string, date time.Time) {
   var content, error = ioutil.ReadFile(FilePath(project, date))
 
   if error == nil {
@@ -22,10 +61,36 @@ func PrintFile(project string, date time.Time) {
   }
 }
 
+func EvaluateDate(project string, date time.Time) {
+  var content, error = ioutil.ReadFile(FilePath(project, date))
+
+  if error == nil {
+    fmt.Printf("%d-%02d-%02d\n", date.Year(), date.Month(), date.Day())
+    var totalled, _ = SumFile(string(content))
+    // TODO handle errors
+    for key, value := range totalled {
+      fmt.Printf("%s:%2.4f\n", key, float64(value) / 60.0 / 60.0)
+    }
+
+    fmt.Println("%%")
+  }
+}
+
 func PrintMonth(project string, year int, month int) {
   var startDate time.Time = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
   for {
-    PrintFile(project, startDate)
+    PrintDate(project, startDate)
+    startDate = startDate.Add(time.Hour * 24)
+    if int(startDate.Month()) != month {
+      break
+    }
+  }
+}
+
+func EvaluateMonth(project string, year int, month int) {
+  var startDate time.Time = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
+  for {
+    EvaluateDate(project, startDate)
     startDate = startDate.Add(time.Hour * 24)
     if int(startDate.Month()) != month {
       break

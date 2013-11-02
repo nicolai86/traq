@@ -11,8 +11,10 @@ var year int
 var day int
 var project string = "timestamps"
 var date string
+var evaluate bool
 
 func main() {
+  flag.BoolVar(&evaluate, "e", false, "evaluate tracked times")
   flag.IntVar(&year, "y", 0, "print tracked times for a given year")
   flag.IntVar(&month, "m", 0, "print tracked times for a given month")
 
@@ -41,6 +43,15 @@ func main() {
     }
   }
 
+  if evaluate {
+    if date == "" {
+      traq.EvaluateMonth(project, year, month)
+    } else {
+      traq.EvaluateDate(project, t)
+    }
+    return
+  }
+
   var command string = flag.Arg(0)
   if command != "" && command != "stop" {
     command = "#" + command
@@ -50,7 +61,7 @@ func main() {
     if date == "" {
       traq.PrintMonth(project, year, month)
     } else {
-      traq.PrintFile(project, t)
+      traq.PrintDate(project, t)
     }
   } else {
     traq.WriteToFile(project, now, command)
