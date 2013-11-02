@@ -4,8 +4,8 @@ import (
   "fmt"
   "io/ioutil"
   "os"
-  "time"
   "strings"
+  "time"
 )
 
 var traqPath string = os.Getenv("TRAQ_DATA_DIR")
@@ -14,7 +14,7 @@ func FilePath(project string, date time.Time) (path string) {
   return fmt.Sprintf("%s/%s/%d/%d-%02d-%02d", traqPath, project, date.Year(), date.Year(), date.Month(), date.Day())
 }
 
-func DatesInMonth(year int, month int) ([]time.Time) {
+func DatesInMonth(year int, month int) []time.Time {
   var dates []time.Time = make([]time.Time, 0)
   var date time.Time = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
 
@@ -84,7 +84,7 @@ func EvaluateDate(project string, date time.Time) {
     var totalled, _ = SumFile(string(content))
     // TODO handle errors
     for key, value := range totalled {
-      fmt.Printf("%s:%2.4f\n", key, float64(value) / 60.0 / 60.0)
+      fmt.Printf("%s:%2.4f\n", key, float64(value)/60.0/60.0)
     }
 
     fmt.Println("%%")

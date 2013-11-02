@@ -35,8 +35,8 @@ func TestSimpleSumFile(t *testing.T) {
 
   if error == nil {
     var total, ok = summed["#work"]
-    if total != 5956|| !ok {
-      t.Errorf("summed['#work'] = %v, want %v", total,  5956)
+    if total != 5956 || !ok {
+      t.Errorf("summed['#work'] = %v, want %v", total, 5956)
     }
   } else {
     t.Errorf("parsing error %v", error)
@@ -50,11 +50,11 @@ func TestNoStopSumFile(t *testing.T) {
   if error == nil {
     var total, ok = summed["#play"]
     if total != 6333 || !ok {
-      t.Errorf("summed['#play'] = %v, want %v", total,  6333)
+      t.Errorf("summed['#play'] = %v, want %v", total, 6333)
     }
     total, ok = summed["#work"]
     if total != 5956 || !ok {
-      t.Errorf("summed['#work'] = %v, want %v", total,  5956)
+      t.Errorf("summed['#work'] = %v, want %v", total, 5956)
     }
   } else {
     t.Errorf("parsing error %v", error)
@@ -67,11 +67,11 @@ func TestWithStopSumFile(t *testing.T) {
   if error == nil {
     var total, ok = summed["#play"]
     if total != 6333 || !ok {
-      t.Errorf("summed['#play'] = %v, want %v", total,  6333)
+      t.Errorf("summed['#play'] = %v, want %v", total, 6333)
     }
     total, ok = summed["#work"]
     if total != 5956 || !ok {
-      t.Errorf("summed['#work'] = %v, want %v", total,  5956)
+      t.Errorf("summed['#work'] = %v, want %v", total, 5956)
     }
   } else {
     t.Errorf("parsing error %v", error)
