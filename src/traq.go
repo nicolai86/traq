@@ -14,6 +14,21 @@ func FilePath(project string, date time.Time) (path string) {
   return fmt.Sprintf("%s/%s/%d/%d-%02d-%02d", traqPath, project, date.Year(), date.Year(), date.Month(), date.Day())
 }
 
+func DatesInMonth(year int, month int) ([]time.Time) {
+  var dates []time.Time = make([]time.Time, 0)
+  var date time.Time = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
+
+  for {
+    dates = append(dates, date)
+    date = date.Add(time.Hour * 24)
+    if int(date.Month()) != month {
+      break
+    }
+  }
+
+  return dates
+}
+
 func SumFile(content string) (map[string]int64, error) {
   var totalled map[string]int64 = make(map[string]int64)
 
@@ -77,24 +92,14 @@ func EvaluateDate(project string, date time.Time) {
 }
 
 func PrintMonth(project string, year int, month int) {
-  var startDate time.Time = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
-  for {
-    PrintDate(project, startDate)
-    startDate = startDate.Add(time.Hour * 24)
-    if int(startDate.Month()) != month {
-      break
-    }
+  for _, date := range DatesInMonth(year, month) {
+    PrintDate(project, date)
   }
 }
 
 func EvaluateMonth(project string, year int, month int) {
-  var startDate time.Time = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
-  for {
-    EvaluateDate(project, startDate)
-    startDate = startDate.Add(time.Hour * 24)
-    if int(startDate.Month()) != month {
-      break
-    }
+  for _, date := range DatesInMonth(year, month) {
+    EvaluateDate(project, date)
   }
 }
 
