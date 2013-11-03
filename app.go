@@ -45,7 +45,7 @@ func main() {
 
 	if evaluate {
 		if date == "" {
-			traq.EvaluateMonth(project, year, month)
+			traq.EvaluateDate(project, traq.DatesInMonth(year, month)...)
 		} else {
 			traq.EvaluateDate(project, t)
 		}
@@ -56,7 +56,7 @@ func main() {
 
 	if command == "" {
 		if date == "" {
-			traq.PrintMonth(project, year, month)
+			traq.PrintDate(project, traq.DatesInMonth(year, month)...)
 		} else {
 			traq.PrintDate(project, t)
 		}

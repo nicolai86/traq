@@ -78,43 +78,33 @@ func SumFile(content string) (map[string]int64, error) {
 
 // PrintDate prints the content of a single traqfile, identified by the project identifer
 // and its date
-func PrintDate(project string, date time.Time) {
-	var content, error = ioutil.ReadFile(FilePath(project, date))
+func PrintDate(project string, dates ...time.Time) {
+	for _, date := range dates {
+		var content, error = ioutil.ReadFile(FilePath(project, date))
 
-	if error == nil {
-		fmt.Print(string(content))
-		fmt.Println("%%")
+		if error == nil {
+			fmt.Print(string(content))
+			fmt.Println("%%")
+		}
 	}
 }
 
 // EvaluateDate prints the evaluation of a single traqfile, identified by the project identifier
 // and its date
-func EvaluateDate(project string, date time.Time) {
-	var content, error = ioutil.ReadFile(FilePath(project, date))
+func EvaluateDate(project string, dates ...time.Time) {
+	for _, date := range dates {
+		var content, error = ioutil.ReadFile(FilePath(project, date))
 
-	if error == nil {
-		fmt.Printf("%d-%02d-%02d\n", date.Year(), date.Month(), date.Day())
-		var totalled, _ = SumFile(string(content))
-		// TODO handle errors
-		for key, value := range totalled {
-			fmt.Printf("%s:%2.4f\n", key, float64(value)/60.0/60.0)
+		if error == nil {
+			fmt.Printf("%d-%02d-%02d\n", date.Year(), date.Month(), date.Day())
+			var totalled, _ = SumFile(string(content))
+			// TODO handle errors
+			for key, value := range totalled {
+				fmt.Printf("%s:%2.4f\n", key, float64(value)/60.0/60.0)
+			}
+
+			fmt.Println("%%")
 		}
-
-		fmt.Println("%%")
-	}
-}
-
-// PrintMonth executes PrintDate for every day in a month
-func PrintMonth(project string, year int, month int) {
-	for _, date := range DatesInMonth(year, month) {
-		PrintDate(project, date)
-	}
-}
-
-// EvaluateMonth executes EvaluateDate for every day in a month
-func EvaluateMonth(project string, year int, month int) {
-	for _, date := range DatesInMonth(year, month) {
-		EvaluateDate(project, date)
 	}
 }
 
