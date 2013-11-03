@@ -40,20 +40,10 @@ $ traq -p client-a
 
 ## Evaluation
 
-To ease evaluation of traq-files `traq` comes with two helper scripts, `traqtrans` and `traqeval`.
+To evaluate traq files pass the `-e` command line flag to the utility.
+E.g.
 
-`traqtrans` transforms the timestamp into a unix timestamp,
-and `traqeval` sums up tags.
-
-    $ traq -p test | traqtrans
-    1348715105;#foo
-    1348715705;#bar
-    1348716305;stop
-    %%
-
-Pipe both together and you'll get something like this:
-
-    $ traq -p test | traqtrans | traqeval
+    $ traq -p test -e
     2012-09-27
     #foo:0.1666
     #bar:0.1666
