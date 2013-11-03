@@ -121,6 +121,10 @@ func EvaluateMonth(project string, year int, month int) {
 // WriteToFile writes a given command to a traq file, converting it into a tag
 // if it's no known command.
 func WriteToFile(project string, date time.Time, command string) {
+	if command != "stop" {
+		command = "#" + command
+	}
+
 	var file, error = os.OpenFile(FilePath(project, date), os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
 	if error == nil {
 		var line = fmt.Sprintf("%s;%s;%s\n", date.Format("Mon Jan 2 15:04:05 -0700 2006"), command, "")

@@ -53,9 +53,6 @@ func main() {
 	}
 
 	var command string = flag.Arg(0)
-	if command != "" && command != "stop" {
-		command = "#" + command
-	}
 
 	if command == "" {
 		if date == "" {
