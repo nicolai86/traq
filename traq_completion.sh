@@ -9,7 +9,7 @@ function _traq() {
   case "$prev" in
     # only traq was entered. suggest different traq arguments
     traq)
-      COMPREPLY=( $(compgen -W "-d -w -p" -- $cur) )
+      COMPREPLY=( $(compgen -W "-d -e -p" -- $cur) )
       return 0
       ;;
 
@@ -41,27 +41,20 @@ function _traq() {
       return 0
       ;;
 
-    # week flag was entered. suggest the current week
-    -w)
-      local week_number=$(date "+%V")
-      COMPREPLY=( $(compgen -W "$week_number" -- $cur) )
-      return 0
-      ;;
-
     *)
       ;;
   esac
 
   # secondary option. only available unless present.
   local options=""
-  if [[ ! "$COMP_LINE" =~ "-d" ]] && [[ ! "$COMP_LINE" =~ "-w" ]]
+  if [[ ! "$COMP_LINE" =~ "-d" ]] && [[ ! "$COMP_LINE" =~ "-e" ]]
   then
     options="$options -d"
   fi
 
-  if [[ ! "$COMP_LINE" =~ "-w" ]] && [[ ! "$COMP_LINE" =~ "-d" ]]
+  if [[ ! "$COMP_LINE" =~ "-e" ]] && [[ ! "$COMP_LINE" =~ "-d" ]]
   then
-    options="$options -w"
+    options="$options -e"
   fi
 
   if [[ ! "$COMP_LINE" =~ "-p" ]]
