@@ -1,8 +1,6 @@
 # traq
 
-bash based time tracking using text files
-
-Requires bash v3.2 or newer. Works on Linux and OS X
+time tracking using text files
 
 ## Usage examples
 
