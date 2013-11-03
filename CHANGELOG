@@ -1,8 +1,9 @@
 # v0.5
 
-- remove option to print times for a given week
+- remove -w flag which printed times for a given week
 - change directory structure of stored timestamps
 - rewrite traq in go
+- introduce -e flag to perform evaluations inside of traq
 
 # v0.4
 
