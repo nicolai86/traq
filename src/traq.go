@@ -1,3 +1,6 @@
+/*
+Package traq implements helper methods for time tracking.
+*/
 package traq
 
 import (
@@ -10,10 +13,13 @@ import (
 
 var traqPath string = os.Getenv("TRAQ_DATA_DIR")
 
+// FilePath returns the path to a traq tracking file, taking the current
+// env into account.
 func FilePath(project string, date time.Time) (path string) {
 	return fmt.Sprintf("%s/%s/%d/%d-%02d-%02d", traqPath, project, date.Year(), date.Year(), date.Month(), date.Day())
 }
 
+// DatesInMonth calculates the days of a given month and year.
 func DatesInMonth(year int, month int) []time.Time {
 	var dates []time.Time = make([]time.Time, 0)
 	var date time.Time = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
@@ -29,6 +35,9 @@ func DatesInMonth(year int, month int) []time.Time {
 	return dates
 }
 
+// SumFile evaluates the content of a traq tracking file.
+// The returned map contains every tag contained in the file as well as the
+// tracked duration in seconds.
 func SumFile(content string) (map[string]int64, error) {
 	var totalled map[string]int64 = make(map[string]int64)
 
@@ -67,6 +76,8 @@ func SumFile(content string) (map[string]int64, error) {
 	return totalled, nil
 }
 
+// PrintDate prints the content of a single traqfile, identified by the project identifer
+// and its date
 func PrintDate(project string, date time.Time) {
 	var content, error = ioutil.ReadFile(FilePath(project, date))
 
@@ -76,6 +87,8 @@ func PrintDate(project string, date time.Time) {
 	}
 }
 
+// EvaluateDate prints the evaluation of a single traqfile, identified by the project identifier
+// and its date
 func EvaluateDate(project string, date time.Time) {
 	var content, error = ioutil.ReadFile(FilePath(project, date))
 
@@ -91,18 +104,22 @@ func EvaluateDate(project string, date time.Time) {
 	}
 }
 
+// PrintMonth executes PrintDate for every day in a month
 func PrintMonth(project string, year int, month int) {
 	for _, date := range DatesInMonth(year, month) {
 		PrintDate(project, date)
 	}
 }
 
+// EvaluateMonth executes EvaluateDate for every day in a month
 func EvaluateMonth(project string, year int, month int) {
 	for _, date := range DatesInMonth(year, month) {
 		EvaluateDate(project, date)
 	}
 }
 
+// WriteToFile writes a given command to a traq file, converting it into a tag
+// if it's no known command.
 func WriteToFile(project string, date time.Time, command string) {
 	var file, error = os.OpenFile(FilePath(project, date), os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
 	if error == nil {
