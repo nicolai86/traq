@@ -79,7 +79,7 @@ $ go build -o bin/traq app.go
 ### Go Formatting
 
 ``` bash
-$ gofmt -tabs=false -tabwidth=2 -w traq.go
+$ gofmt -w traq.go
 ```
 ## Bash Completion
 
