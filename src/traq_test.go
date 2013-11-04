@@ -15,6 +15,8 @@ func TestFilePath(t *testing.T) {
 	}
 }
 
+
+// TODO make these a table-driven test!
 func TestEmptySumFile(t *testing.T) {
 	var content string = ""
 	var summed, error = traq.SumFile(content)
