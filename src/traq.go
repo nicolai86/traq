@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"path"
 )
 
 var traqPath string = os.Getenv("TRAQ_DATA_DIR")
@@ -115,7 +116,11 @@ func WriteToFile(project string, date time.Time, command string) {
 		command = "#" + command
 	}
 
-	var file, error = os.OpenFile(FilePath(project, date), os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
+	var traqFile string = FilePath(project, date)
+	var projectDir string = path.Dir(traqFile)
+
+	_ = os.MkdirAll(projectDir, os.ModeDir | os.ModePerm)
+	var file, error = os.OpenFile(traqFile, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
 	if error == nil {
 		var line = fmt.Sprintf("%s;%s;%s\n", date.Format("Mon Jan 2 15:04:05 -0700 2006"), command, "")
 		file.WriteString(line)
