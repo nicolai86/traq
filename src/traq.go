@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"strings"
 	"time"
-	"path"
 )
 
 var traqPath string = os.Getenv("TRAQ_DATA_DIR")
@@ -36,7 +36,7 @@ func DatesInMonth(year int, month int) []time.Time {
 	return dates
 }
 
-type LogLoader func (string) ([]string, error)
+type LogLoader func(string) ([]string, error)
 
 func ContentLoader(filePath string) ([]string, error) {
 	content, err := ioutil.ReadFile(filePath)
@@ -115,7 +115,7 @@ func EvaluateDate(contentLoader LogLoader, project string, dates ...time.Time) {
 	}
 }
 
-func Entry(date time.Time, command string) (string) {
+func Entry(date time.Time, command string) string {
 	return fmt.Sprintf("%s;%s;%s\n", date.Format("Mon Jan 2 15:04:05 -0700 2006"), command, "")
 }
 
@@ -129,7 +129,7 @@ func WriteToFile(project string, date time.Time, command string) {
 	var traqFile string = FilePath(project, date)
 	var projectDir string = path.Dir(traqFile)
 
-	_ = os.MkdirAll(projectDir, os.ModeDir | os.ModePerm)
+	_ = os.MkdirAll(projectDir, os.ModeDir|os.ModePerm)
 	var file, error = os.OpenFile(traqFile, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
 	if error == nil {
 		file.WriteString(Entry(date, command))

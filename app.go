@@ -2,9 +2,9 @@ package main
 
 import (
 	"flag"
+	"regexp"
 	"time"
 	"traq"
-	"regexp"
 )
 
 var month int
@@ -17,7 +17,7 @@ var running bool
 
 var stopLine = regexp.MustCompile(`;stop;`)
 
-func RunningLoader (filePath string) ([]string, error) {
+func RunningLoader(filePath string) ([]string, error) {
 	content, err := traq.ContentLoader(filePath)
 
 	if err == nil {
@@ -27,7 +27,7 @@ func RunningLoader (filePath string) ([]string, error) {
 
 		var line = traq.Entry(time.Now(), "stop")
 		n := len(content)
-		newContent := make([]string, n + 1)
+		newContent := make([]string, n+1)
 		copy(newContent, content)
 		newContent[n] = line
 
