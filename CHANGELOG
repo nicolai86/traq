@@ -1,3 +1,7 @@
+# v0.6
+
+- running timer evaluation using -r flag
+
 # v0.5
 
 - remove -w flag which printed times for a given week
