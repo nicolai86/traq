@@ -36,13 +36,19 @@ func DatesInMonth(year int, month int) []time.Time {
 	return dates
 }
 
+type LogLoader func (string) ([]string, error)
+
+func ContentLoader(filePath string) ([]string, error) {
+	content, err := ioutil.ReadFile(filePath)
+	return strings.Split(string(content), "\n"), err
+}
+
 // SumFile evaluates the content of a traq tracking file.
 // The returned map contains every tag contained in the file as well as the
 // tracked duration in seconds.
-func SumFile(content string) (map[string]int64, error) {
+func SumFile(lines []string) (map[string]int64, error) {
 	var totalled map[string]int64 = make(map[string]int64)
 
-	var lines []string = strings.Split(content, "\n")
 	var currentTag string = ""
 	var currentTime time.Time
 
@@ -81,9 +87,9 @@ func SumFile(content string) (map[string]int64, error) {
 // and its date
 func PrintDate(project string, dates ...time.Time) {
 	for _, date := range dates {
-		var content, error = ioutil.ReadFile(FilePath(project, date))
+		content, err := ioutil.ReadFile(FilePath(project, date))
 
-		if error == nil {
+		if err == nil {
 			fmt.Print(string(content))
 			fmt.Println("%%")
 		}
@@ -92,13 +98,13 @@ func PrintDate(project string, dates ...time.Time) {
 
 // EvaluateDate prints the evaluation of a single traqfile, identified by the project identifier
 // and its date
-func EvaluateDate(project string, dates ...time.Time) {
+func EvaluateDate(contentLoader LogLoader, project string, dates ...time.Time) {
 	for _, date := range dates {
-		var content, error = ioutil.ReadFile(FilePath(project, date))
+		var content, error = contentLoader(FilePath(project, date))
 
 		if error == nil {
 			fmt.Printf("%d-%02d-%02d\n", date.Year(), date.Month(), date.Day())
-			var totalled, _ = SumFile(string(content))
+			var totalled, _ = SumFile(content)
 			// TODO handle errors
 			for key, value := range totalled {
 				fmt.Printf("%s:%2.4f\n", key, float64(value)/60.0/60.0)
@@ -107,6 +113,10 @@ func EvaluateDate(project string, dates ...time.Time) {
 			fmt.Println("%%")
 		}
 	}
+}
+
+func Entry(date time.Time, command string) (string) {
+	return fmt.Sprintf("%s;%s;%s\n", date.Format("Mon Jan 2 15:04:05 -0700 2006"), command, "")
 }
 
 // WriteToFile writes a given command to a traq file, converting it into a tag
@@ -122,8 +132,7 @@ func WriteToFile(project string, date time.Time, command string) {
 	_ = os.MkdirAll(projectDir, os.ModeDir | os.ModePerm)
 	var file, error = os.OpenFile(traqFile, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
 	if error == nil {
-		var line = fmt.Sprintf("%s;%s;%s\n", date.Format("Mon Jan 2 15:04:05 -0700 2006"), command, "")
-		file.WriteString(line)
+		file.WriteString(Entry(date, command))
 		file.Close()
 	}
 }

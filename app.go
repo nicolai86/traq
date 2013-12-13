@@ -4,6 +4,7 @@ import (
 	"flag"
 	"time"
 	"traq"
+	"regexp"
 )
 
 var month int
@@ -12,9 +13,34 @@ var day int
 var project string = "timestamps"
 var date string
 var evaluate bool
+var running bool
+
+var stopLine = regexp.MustCompile(`;stop;`)
+
+func RunningLoader (filePath string) ([]string, error) {
+	content, err := traq.ContentLoader(filePath)
+
+	if err == nil {
+		if stopLine.MatchString(content[len(content)-1]) {
+			return content, err
+		}
+
+		var line = traq.Entry(time.Now(), "stop")
+		n := len(content)
+		newContent := make([]string, n + 1)
+		copy(newContent, content)
+		newContent[n] = line
+
+		return newContent, err
+	}
+
+	return content, err
+}
 
 func main() {
 	flag.BoolVar(&evaluate, "e", false, "evaluate tracked times")
+	flag.BoolVar(&running, "r", false, "add fake stop entry to evaluate if stop is missing")
+
 	flag.IntVar(&year, "y", 0, "print tracked times for a given year")
 	flag.IntVar(&month, "m", 0, "print tracked times for a given month")
 
@@ -43,11 +69,17 @@ func main() {
 		}
 	}
 
+	var loader traq.LogLoader = traq.ContentLoader
+
+	if running {
+		loader = RunningLoader
+	}
+
 	if evaluate {
 		if date == "" {
-			traq.EvaluateDate(project, traq.DatesInMonth(year, month)...)
+			traq.EvaluateDate(loader, project, traq.DatesInMonth(year, month)...)
 		} else {
-			traq.EvaluateDate(project, t)
+			traq.EvaluateDate(loader, project, t)
 		}
 		return
 	}
