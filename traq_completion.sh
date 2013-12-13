@@ -57,6 +57,11 @@ function _traq() {
     options="$options -e"
   fi
 
+  if [[ ! "$COMP_LINE" =~ "-r" ]]
+  then
+    options="$options -r"
+  fi
+
   if [[ ! "$COMP_LINE" =~ "-p" ]]
   then
     options="$options -p"
