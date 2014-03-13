@@ -76,6 +76,34 @@ Wed Sep 03 23:24:49 +0100 1986;stop;
   }
 }
 
+func TestEvaluateDate(t *testing.T) {
+  out := CaptureStdout(func() {
+    WithFakeEnv(func() {
+      EvaluateDate(ContentLoader, "example", time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC))
+    })
+  })
+
+  expected :=
+`1986-09-03
+#birth:1.7592
+#chillout:1.6544
+%%
+`
+
+  if out != expected {
+    t.Errorf("unexpected EvaluateDate output. Expected '%v' got '%v'", expected, out)
+  }
+}
+
+func TestEntry(t *testing.T) {
+  expected := `Wed Sep 3 12:00:00 +0000 1986;#test;
+`
+
+  if entry := Entry(time.Date(1986, 9, 3, 12, 0, 0, 0, time.UTC), "#test"); entry != expected {
+    t.Errorf("got wrong entry. Expected '%v' got '%v'", expected, entry)
+  }
+}
+
 func TestFilePath(t *testing.T) {
 	var path string = FilePath("example", time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC))
 
