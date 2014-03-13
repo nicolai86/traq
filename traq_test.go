@@ -8,17 +8,22 @@ import (
 	"io"
 )
 
-func TestPrintDate(t *testing.T) {
-  old := os.Stdout // keep backup of the real stdout
-  r, w, _ := os.Pipe()
-  os.Stdout = w
-
+func WithFakeEnv(block func()) {
   oldEnv := os.Getenv("TRAQ_DATA_DIR")
   path, _ := os.Getwd()
   os.Setenv("TRAQ_DATA_DIR", path + "/fixtures")
 
-  PrintDate("example", time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC))
+  block()
+
   os.Setenv("TRAQ_DATA_DIR", oldEnv)
+}
+
+func CaptureStdout(block func()) string {
+  old := os.Stdout // keep backup of the real stdout
+  r, w, _ := os.Pipe()
+  os.Stdout = w
+
+  block()
 
   outC := make(chan string)
   // copy the output in a separate goroutine so printing can't block indefinitely
@@ -31,7 +36,16 @@ func TestPrintDate(t *testing.T) {
   // back to normal state
   w.Close()
   os.Stdout = old
-  out := <-outC
+
+  return <-outC
+}
+
+func TestPrintDate(t *testing.T) {
+  out := CaptureStdout(func() {
+    WithFakeEnv(func() {
+      PrintDate("example", time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC))
+    })
+  })
 
   expected :=
 `Wed Sep 03 20:00:00 +0100 1986;#birth;comment
