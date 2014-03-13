@@ -47,18 +47,13 @@ E.g.
     #bar:0.1666
     %%
 
-## Installation
-
-`traq` assumes you're installing it to your home directory, into `~/.traq`. This will set you up:
+## Installation from source
 
 ``` bash
-$ mkdir $HOME/.traq
-$ mkdir -p $HOME/Library/traq
-$ git clone git@github.com:nicolai86/traq.git ~/.traq
-$ echo "export TRAQ_PATH=$HOME/.traq" >> ~/.bash_profile
+$ go get https://github.com/nicolai86/traq
+$ echo "export TRAQ_PATH=$GOPATH/src/github.com/nicolai86/traq" >> ~/.bash_profile
 $ echo "export TRAQ_DATA_DIR=$HOME/Library/traq" >> ~/.bash_profile
-$ echo "export PATH=$PATH:$HOME/.traq/bin" >> ~/.bash_profile
-$ ln -s $HOME/.traq/man/traq.1 /usr/local/share/man/man1/traq.1
+$ ln -s $TRAQ_PATH/man/traq.1 /usr/local/share/man/man1/traq.1
 $ . ~/.bash_profile
 $ which traq
 ```
