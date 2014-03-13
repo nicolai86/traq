@@ -50,7 +50,7 @@ E.g.
 ## Installation from source
 
 ``` bash
-$ go get https://github.com/nicolai86/traq
+$ go install github.com/nicolai86/traq
 $ echo "export TRAQ_PATH=$GOPATH/src/github.com/nicolai86/traq" >> ~/.bash_profile
 $ echo "export TRAQ_DATA_DIR=$HOME/Library/traq" >> ~/.bash_profile
 $ ln -s $TRAQ_PATH/man/traq.1 /usr/local/share/man/man1/traq.1
