@@ -4,14 +4,14 @@ Package traq implements helper methods for time tracking.
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
+	"regexp"
 	"strings"
 	"time"
-	"flag"
-	"regexp"
 )
 
 var traqPath string = os.Getenv("TRAQ_DATA_DIR")
