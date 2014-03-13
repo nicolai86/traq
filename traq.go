@@ -43,6 +43,27 @@ func ContentLoader(filePath string) ([]string, error) {
 	return strings.Split(string(content), "\n"), err
 }
 
+var stopLine = regexp.MustCompile(`;stop;`)
+func RunningLoader(filePath string) ([]string, error) {
+	content, err := ContentLoader(filePath)
+
+	if err == nil {
+		if stopLine.MatchString(content[len(content)-1]) {
+			return content, err
+		}
+
+		var line = Entry(time.Now(), "stop")
+		n := len(content)
+		newContent := make([]string, n+1)
+		copy(newContent, content)
+		newContent[n] = line
+
+		return newContent, err
+	}
+
+	return content, err
+}
+
 // SumFile evaluates the content of a traq tracking file.
 // The returned map contains every tag contained in the file as well as the
 // tracked duration in seconds.
@@ -144,28 +165,6 @@ var project string = "timestamps"
 var date string
 var evaluate bool
 var running bool
-
-var stopLine = regexp.MustCompile(`;stop;`)
-
-func RunningLoader(filePath string) ([]string, error) {
-	content, err := ContentLoader(filePath)
-
-	if err == nil {
-		if stopLine.MatchString(content[len(content)-1]) {
-			return content, err
-		}
-
-		var line = Entry(time.Now(), "stop")
-		n := len(content)
-		newContent := make([]string, n+1)
-		copy(newContent, content)
-		newContent[n] = line
-
-		return newContent, err
-	}
-
-	return content, err
-}
 
 func main() {
 	flag.BoolVar(&evaluate, "e", false, "evaluate tracked times")
