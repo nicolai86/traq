@@ -8,6 +8,7 @@ import (
 	"io"
 )
 
+// change traq env to use our fixtures
 func WithFakeEnv(block func()) {
   oldEnv := os.Getenv("TRAQ_DATA_DIR")
   path, _ := os.Getwd()
@@ -18,6 +19,7 @@ func WithFakeEnv(block func()) {
   os.Setenv("TRAQ_DATA_DIR", oldEnv)
 }
 
+// capture output written to os.Stdout and return it
 func CaptureStdout(block func()) string {
   old := os.Stdout // keep backup of the real stdout
   r, w, _ := os.Pipe()
@@ -38,6 +40,22 @@ func CaptureStdout(block func()) string {
   os.Stdout = old
 
   return <-outC
+}
+
+func TestDatesInMonth(t *testing.T) {
+  dates := DatesInMonth(1986, 9)
+
+  if len(dates) != 30 {
+    t.Errorf("expected 30 days in Sep 1986, got %v", len(dates))
+  }
+
+  if dates[0].Weekday() != time.Monday {
+    t.Errorf("Started on a Monday, got %v", dates[0].Weekday())
+  }
+
+  if dates[len(dates) - 1].Weekday() != time.Tuesday {
+    t.Errorf("Ended on a Tuesday, got %v", dates[len(dates) - 1].Weekday())
+  }
 }
 
 func TestPrintDate(t *testing.T) {
