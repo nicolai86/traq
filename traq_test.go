@@ -6,6 +6,7 @@ import (
 	"time"
 	"bytes"
 	"io"
+  "path"
 )
 
 // change traq env to use our fixtures
@@ -107,6 +108,7 @@ func TestEntry(t *testing.T) {
 func TestWriteToFile(t *testing.T) {
   startDate := time.Date(2013, 1, 3, 12, 30, 0, 0, time.UTC)
   endDate := time.Date(2013, 1, 3, 13, 30, 0, 0, time.UTC)
+
   WithFakeEnv(func() {
     WriteToFile("example", startDate, "test")
 
@@ -130,7 +132,23 @@ func TestWriteToFile(t *testing.T) {
       t.Errorf("Expected different stop line. Got %v", out[1])
     }
 
-    os.RemoveAll(filePath)
+    os.RemoveAll(path.Dir(filePath))
+  })
+}
+
+func TestRunningLoader(t *testing.T) {
+  startDate := time.Date(2013, 1, 3, 12, 30, 0, 0, time.UTC)
+
+  WithFakeEnv(func() {
+    WriteToFile("example", startDate, "test")
+
+    filePath := FilePath("example", startDate)
+    out, _ := RunningLoader(filePath)
+    if len(out) != 3 {
+      t.Errorf("Expected different line count. Got %v", len(out))
+    }
+
+    os.RemoveAll(path.Dir(filePath))
   })
 }
 
