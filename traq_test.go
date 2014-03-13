@@ -104,6 +104,36 @@ func TestEntry(t *testing.T) {
   }
 }
 
+func TestWriteToFile(t *testing.T) {
+  startDate := time.Date(2013, 1, 3, 12, 30, 0, 0, time.UTC)
+  endDate := time.Date(2013, 1, 3, 13, 30, 0, 0, time.UTC)
+  WithFakeEnv(func() {
+    WriteToFile("example", startDate, "test")
+
+    filePath := FilePath("example", startDate)
+    out, _ := ContentLoader(filePath)
+    if len(out) != 2 {
+      t.Errorf("Expected different line count. Got %v", len(out))
+    }
+
+    if out[0] != "Thu Jan 3 12:30:00 +0000 2013;#test;" {
+      t.Errorf("Expected different first line. Got %v", out[0])
+    }
+
+    WriteToFile("example", endDate, "stop")
+    out, _ = ContentLoader(filePath)
+
+    if len(out) != 3 {
+      t.Errorf("Expected different line count. Got %v", len(out))
+    }
+    if out[1] != "Thu Jan 3 13:30:00 +0000 2013;stop;" {
+      t.Errorf("Expected different stop line. Got %v", out[1])
+    }
+
+    os.RemoveAll(filePath)
+  })
+}
+
 func TestFilePath(t *testing.T) {
 	var path string = FilePath("example", time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC))
 
