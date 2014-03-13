@@ -4,7 +4,45 @@ import (
 	"os"
 	"testing"
 	"time"
+	"bytes"
+	"io"
 )
+
+func TestPrintDate(t *testing.T) {
+  old := os.Stdout // keep backup of the real stdout
+  r, w, _ := os.Pipe()
+  os.Stdout = w
+
+  oldEnv := os.Getenv("TRAQ_DATA_DIR")
+  path, _ := os.Getwd()
+  os.Setenv("TRAQ_DATA_DIR", path + "/fixtures")
+
+  PrintDate("example", time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC))
+  os.Setenv("TRAQ_DATA_DIR", oldEnv)
+
+  outC := make(chan string)
+  // copy the output in a separate goroutine so printing can't block indefinitely
+  go func() {
+      var buf bytes.Buffer
+      io.Copy(&buf, r)
+      outC <- buf.String()
+  }()
+
+  // back to normal state
+  w.Close()
+  os.Stdout = old
+  out := <-outC
+
+  expected :=
+`Wed Sep 03 20:00:00 +0100 1986;#birth;comment
+Wed Sep 03 21:45:33 +0100 1986;#chillout;
+Wed Sep 03 23:24:49 +0100 1986;stop;
+%%
+`
+  if out != expected {
+    t.Errorf("unexpected PrintDate output. Expected '%v' got '%v'", expected, out)
+  }
+}
 
 func TestFilePath(t *testing.T) {
 	var path string = FilePath("example", time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC))
