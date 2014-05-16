@@ -1,5 +1,7 @@
 # traq
 
+![travis build status](https://travis-ci.org/nicolai86/traq.svg?branch=master)
+
 time tracking using text files
 
 ## Usage examples
