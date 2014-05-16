@@ -78,6 +78,28 @@ Wed Sep 03 23:24:49 +0100 1986;stop;
 	}
 }
 
+func TestSummarizeDate(t *testing.T) {
+	out := CaptureStdout(func() {
+		WithFakeEnv(func() {
+			SummarizeDate("example", time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC), time.Date(1986, 9, 4, 0, 0, 0, 0, time.UTC))
+		})
+	})
+
+	expectedLines := map[string]bool{
+		"#birth:1.7592":    false,
+		"#chillout:3.3089": false,
+		"#sleeping:1.7592": false,
+	}
+	for _, line := range strings.Split(out, "\n") {
+		expectedLines[line] = true
+	}
+	for key, present := range expectedLines {
+		if !present {
+			t.Errorf("unexpected EvaluateDate output. Expected '%v', missing from '%v'", key, out)
+		}
+	}
+}
+
 func TestEvaluateDate(t *testing.T) {
 	out := CaptureStdout(func() {
 		WithFakeEnv(func() {

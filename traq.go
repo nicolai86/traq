@@ -44,6 +44,7 @@ func ContentLoader(filePath string) ([]string, error) {
 }
 
 var stopLine = regexp.MustCompile(`;stop;`)
+
 func RunningLoader(filePath string) ([]string, error) {
 	content, err := ContentLoader(filePath)
 
@@ -104,6 +105,8 @@ func SumFile(lines []string) (map[string]int64, error) {
 	return totalled, nil
 }
 
+type TraqHandler func(string, ...time.Time)
+
 // PrintDate prints the content of a single traqfile, identified by the project identifer
 // and its date
 func PrintDate(project string, dates ...time.Time) {
@@ -114,6 +117,31 @@ func PrintDate(project string, dates ...time.Time) {
 			fmt.Print(string(content))
 			fmt.Println("%%")
 		}
+	}
+}
+
+func SummarizeDate(project string, dates ...time.Time) {
+	var tags map[string]int64 = make(map[string]int64)
+	for _, date := range dates {
+		content, err := ioutil.ReadFile(FilePath(project, date))
+
+		if err == nil {
+			var totalled, _ = SumFile(strings.Split(string(content), "\n"))
+
+			for key, value := range totalled {
+				current, ok := tags[key]
+				if !ok {
+					tags[key] = value
+				} else {
+					tags[key] = value + current
+				}
+			}
+		}
+	}
+
+	fmt.Printf("%4d-%02d-%02d\n", year, month, day)
+	for key, value := range tags {
+		fmt.Printf("%s:%2.4f\n", key, float64(value)/60.0/60.0)
 	}
 }
 
@@ -158,17 +186,21 @@ func WriteToFile(project string, date time.Time, command string) {
 	}
 }
 
-var month int
-var year int
-var day int
-var project string = "timestamps"
-var date string
-var evaluate bool
-var running bool
+var (
+	month    int
+	year     int
+	day      int
+	project  string = "timestamps"
+	date     string
+	evaluate bool
+	running  bool
+	summary  bool
+)
 
 func main() {
 	flag.BoolVar(&evaluate, "e", false, "evaluate tracked times")
 	flag.BoolVar(&running, "r", false, "add fake stop entry to evaluate if stop is missing")
+	flag.BoolVar(&summary, "s", false, "summaries the given timeframe")
 
 	flag.IntVar(&year, "y", 0, "print tracked times for a given year")
 	flag.IntVar(&month, "m", 0, "print tracked times for a given month")
@@ -215,11 +247,16 @@ func main() {
 
 	var command string = flag.Arg(0)
 
+	var handler TraqHandler = PrintDate
+	if summary {
+		handler = SummarizeDate
+	}
+
 	if command == "" {
 		if date == "" {
-			PrintDate(project, DatesInMonth(year, month)...)
+			handler(project, DatesInMonth(year, month)...)
 		} else {
-			PrintDate(project, t)
+			handler(project, t)
 		}
 	} else {
 		WriteToFile(project, now, command)
