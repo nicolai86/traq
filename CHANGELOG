@@ -1,3 +1,7 @@
+# v0.7
+
+- add support to summarize given time ranges, e.g. summarize all times within a month, using the -s flag
+
 # v0.6
 
 - running timer evaluation using -r flag
