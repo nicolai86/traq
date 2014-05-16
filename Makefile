@@ -32,8 +32,8 @@ check:
 clean:
 	git clean -f -x -d
 
-dist/$(ARCHIVE): $(DISTDIR)/api
+dist/$(ARCHIVE): $(DISTDIR)/traq
 	tar -C $(DISTDIR) -czvf $@ .
 
-$(DISTDIR)/api: *.go
+$(DISTDIR)/traq: *.go
 	$(GOBUILD) -o $@
