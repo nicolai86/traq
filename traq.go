@@ -16,13 +16,26 @@ import (
 
 type TimeEntryStorage interface {
 	Store(TimeEntry) error
+	Content(time.Time) ([]string, error)
 }
 
 type FileSystemStorage struct {
+	BasePath string
+	Project  string
+	loader   LogLoader
 }
 
-func (fs *FileSystemStorage) Path(project string, date time.Time) string {
-	return fmt.Sprintf("%s/%s/%d/%d-%02d-%02d", os.Getenv("TRAQ_DATA_DIR"), project, date.Year(), date.Year(), date.Month(), date.Day())
+func (fs *FileSystemStorage) Path(date time.Time) string {
+	return fmt.Sprintf("%s/%s/%d/%d-%02d-%02d", fs.BasePath, fs.Project, date.Year(), date.Year(), date.Month(), date.Day())
+}
+
+func (fs *FileSystemStorage) Store(entry TimeEntry) error {
+	WriteToFile(fs.Project, entry.Date, entry.Tag)
+	return nil
+}
+
+func (fs *FileSystemStorage) Content(date time.Time) ([]string, error) {
+	return fs.loader(fs.Path(date))
 }
 
 // FilePath returns the path to a traq tracking file, taking the current
@@ -130,9 +143,9 @@ func SummarizeDate(project string, loader LogLoader, dates ...time.Time) {
 
 // EvaluateDate prints the evaluation of a single traqfile, identified by the project identifier
 // and its date
-func EvaluateDate(contentLoader LogLoader, project string, dates ...time.Time) {
+func evaluateDate(contentLoader LogLoader, storage TimeEntryStorage, dates ...time.Time) {
 	for _, date := range dates {
-		var content, error = contentLoader(FilePath(project, date))
+		var content, error = storage.Content(date)
 
 		if error == nil {
 			fmt.Printf("%d-%02d-%02d\n", date.Year(), date.Month(), date.Day())
@@ -202,11 +215,13 @@ func main() {
 		loader = RunningLoader
 	}
 
+	storageProvider := FileSystemStorage{os.Getenv("TRAQ_DATA_DIR"), *project, loader}
+
 	if *evaluate {
 		if *date == "" {
-			EvaluateDate(loader, *project, DatesInMonth(*year, *month)...)
+			evaluateDate(loader, &storageProvider, DatesInMonth(*year, *month)...)
 		} else {
-			EvaluateDate(loader, *project, t)
+			evaluateDate(loader, &storageProvider, t)
 		}
 		return
 	}
