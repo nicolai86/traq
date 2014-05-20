@@ -15,6 +15,17 @@ import (
 	"time"
 )
 
+type TimeEntryStorage interface {
+	Store(TimeEntry) error
+}
+
+type FileSystemStorage struct {
+}
+
+func (fs *FileSystemStorage) Path(project string, date time.Time) string {
+	return fmt.Sprintf("%s/%s/%d/%d-%02d-%02d", os.Getenv("TRAQ_DATA_DIR"), project, date.Year(), date.Year(), date.Month(), date.Day())
+}
+
 // FilePath returns the path to a traq tracking file, taking the current
 // env into account.
 func FilePath(project string, date time.Time) (path string) {
