@@ -1,5 +1,7 @@
+// Copyright 2013-2014 Raphael Randschau
+
 /*
-Package traq implements helper methods for time tracking.
+Package traq implements a CLI for time tracking.
 */
 package main
 
@@ -9,7 +11,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
-	"regexp"
 	"strings"
 	"time"
 )
@@ -34,35 +35,6 @@ func DatesInMonth(year int, month int) []time.Time {
 	}
 
 	return dates
-}
-
-type LogLoader func(string) ([]string, error)
-
-func ContentLoader(filePath string) ([]string, error) {
-	content, err := ioutil.ReadFile(filePath)
-	return strings.Split(string(content), "\n"), err
-}
-
-var stopLine = regexp.MustCompile(`;stop;`)
-
-func RunningLoader(filePath string) ([]string, error) {
-	content, err := ContentLoader(filePath)
-
-	if err == nil {
-		if stopLine.MatchString(content[len(content)-1]) {
-			return content, err
-		}
-
-		var line = Entry(time.Now(), "stop")
-		n := len(content)
-		newContent := make([]string, n+1)
-		copy(newContent, content)
-		newContent[n] = line
-
-		return newContent, err
-	}
-
-	return content, err
 }
 
 // SumFile evaluates the content of a traq tracking file.
@@ -164,8 +136,8 @@ func EvaluateDate(contentLoader LogLoader, project string, dates ...time.Time) {
 	}
 }
 
-func Entry(date time.Time, command string) string {
-	return fmt.Sprintf("%s;%s;%s\n", date.Format("Mon Jan 2 15:04:05 -0700 2006"), command, "")
+func Entry(date time.Time, command string, comment string) string {
+	return fmt.Sprintf("%s;%s;%s\n", date.Format("Mon Jan 2 15:04:05 -0700 2006"), command, comment)
 }
 
 // WriteToFile writes a given command to a traq file, converting it into a tag
@@ -181,7 +153,7 @@ func WriteToFile(project string, date time.Time, command string) {
 	_ = os.MkdirAll(projectDir, os.ModeDir|os.ModePerm)
 	var file, error = os.OpenFile(traqFile, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
 	if error == nil {
-		file.WriteString(Entry(date, command))
+		file.WriteString(Entry(date, command, ""))
 		file.Close()
 	}
 }

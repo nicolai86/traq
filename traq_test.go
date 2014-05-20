@@ -1,48 +1,12 @@
 package main
 
 import (
-	"bytes"
-	"io"
 	"os"
 	"path"
 	"strings"
 	"testing"
 	"time"
 )
-
-// change traq env to use our fixtures
-func WithFakeEnv(block func()) {
-	oldEnv := os.Getenv("TRAQ_DATA_DIR")
-	path, _ := os.Getwd()
-	os.Setenv("TRAQ_DATA_DIR", path+"/fixtures")
-
-	block()
-
-	os.Setenv("TRAQ_DATA_DIR", oldEnv)
-}
-
-// capture output written to os.Stdout and return it
-func CaptureStdout(block func()) string {
-	old := os.Stdout // keep backup of the real stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-
-	block()
-
-	outC := make(chan string)
-	// copy the output in a separate goroutine so printing can't block indefinitely
-	go func() {
-		var buf bytes.Buffer
-		io.Copy(&buf, r)
-		outC <- buf.String()
-	}()
-
-	// back to normal state
-	w.Close()
-	os.Stdout = old
-
-	return <-outC
-}
 
 func TestDatesInMonth(t *testing.T) {
 	dates := DatesInMonth(1986, 9)
@@ -126,7 +90,7 @@ func TestEntry(t *testing.T) {
 	expected := `Wed Sep 3 12:00:00 +0000 1986;#test;
 `
 
-	if entry := Entry(time.Date(1986, 9, 3, 12, 0, 0, 0, time.UTC), "#test"); entry != expected {
+	if entry := Entry(time.Date(1986, 9, 3, 12, 0, 0, 0, time.UTC), "#test", ""); entry != expected {
 		t.Errorf("got wrong entry. Expected '%v' got '%v'", expected, entry)
 	}
 }
@@ -156,22 +120,6 @@ func TestWriteToFile(t *testing.T) {
 		}
 		if out[1] != "Thu Jan 3 13:30:00 +0000 2013;stop;" {
 			t.Errorf("Expected different stop line. Got %v", out[1])
-		}
-
-		os.RemoveAll(path.Dir(filePath))
-	})
-}
-
-func TestRunningLoader(t *testing.T) {
-	startDate := time.Date(2013, 1, 3, 12, 30, 0, 0, time.UTC)
-
-	WithFakeEnv(func() {
-		WriteToFile("example", startDate, "test")
-
-		filePath := FilePath("example", startDate)
-		out, _ := RunningLoader(filePath)
-		if len(out) != 3 {
-			t.Errorf("Expected different line count. Got %v", len(out))
 		}
 
 		os.RemoveAll(path.Dir(filePath))
