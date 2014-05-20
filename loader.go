@@ -36,7 +36,11 @@ type LogLoader func(string) ([]string, error)
 
 func ContentLoader(filePath string) ([]string, error) {
 	content, err := ioutil.ReadFile(filePath)
-	return strings.Split(string(content), "\n"), err
+	lines := strings.Split(string(content), "\n")
+	if lines[len(lines)-1] == "" {
+		return lines[0 : len(lines)-1], err
+	}
+	return lines, err
 }
 
 var stopLine = regexp.MustCompile(`;stop;`)
