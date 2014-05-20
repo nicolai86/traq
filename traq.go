@@ -40,7 +40,11 @@ type LogLoader func(string) ([]string, error)
 
 func ContentLoader(filePath string) ([]string, error) {
 	content, err := ioutil.ReadFile(filePath)
-	return strings.Split(string(content), "\n"), err
+	lines := strings.Split(string(content), "\n")
+	if lines[len(lines)-1] == "" {
+		return lines[0 : len(lines)-1], err
+	}
+	return lines, err
 }
 
 var stopLine = regexp.MustCompile(`;stop;`)
@@ -56,7 +60,7 @@ func RunningLoader(filePath string) ([]string, error) {
 		var line = Entry(time.Now(), "stop")
 		n := len(content)
 		newContent := make([]string, n+1)
-		copy(newContent, content)
+		copy(newContent, content[0:])
 		newContent[n] = line
 
 		return newContent, err
@@ -105,28 +109,28 @@ func SumFile(lines []string) (map[string]int64, error) {
 	return totalled, nil
 }
 
-type TraqHandler func(string, ...time.Time)
+type TraqHandler func(string, LogLoader, ...time.Time)
 
 // PrintDate prints the content of a single traqfile, identified by the project identifer
 // and its date
-func PrintDate(project string, dates ...time.Time) {
+func PrintDate(project string, loader LogLoader, dates ...time.Time) {
 	for _, date := range dates {
-		content, err := ioutil.ReadFile(FilePath(project, date))
+		content, err := loader(FilePath(project, date))
 
 		if err == nil {
-			fmt.Print(string(content))
-			fmt.Println("%%")
+			fmt.Print(strings.Join(content, "\n"))
+			fmt.Println("\n%%")
 		}
 	}
 }
 
-func SummarizeDate(project string, dates ...time.Time) {
+func SummarizeDate(project string, loader LogLoader, dates ...time.Time) {
 	var tags map[string]int64 = make(map[string]int64)
 	for _, date := range dates {
-		content, err := ioutil.ReadFile(FilePath(project, date))
+		content, err := loader(FilePath(project, date))
 
 		if err == nil {
-			var totalled, _ = SumFile(strings.Split(string(content), "\n"))
+			var totalled, _ = SumFile(content)
 
 			for key, value := range totalled {
 				current, ok := tags[key]
@@ -238,9 +242,9 @@ func main() {
 
 	if command == "" {
 		if *date == "" {
-			handler(*project, DatesInMonth(*year, *month)...)
+			handler(*project, loader, DatesInMonth(*year, *month)...)
 		} else {
-			handler(*project, t)
+			handler(*project, loader, t)
 		}
 	} else {
 		WriteToFile(*project, now, command)

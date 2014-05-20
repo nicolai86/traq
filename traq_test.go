@@ -63,7 +63,7 @@ func TestDatesInMonth(t *testing.T) {
 func TestPrintDate(t *testing.T) {
 	out := CaptureStdout(func() {
 		WithFakeEnv(func() {
-			PrintDate("example", time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC))
+			PrintDate("example", ContentLoader, time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC))
 		})
 	})
 
@@ -81,7 +81,7 @@ Wed Sep 03 23:24:49 +0100 1986;stop;
 func TestSummarizeDate(t *testing.T) {
 	out := CaptureStdout(func() {
 		WithFakeEnv(func() {
-			SummarizeDate("example", time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC), time.Date(1986, 9, 4, 0, 0, 0, 0, time.UTC))
+			SummarizeDate("example", ContentLoader, time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC), time.Date(1986, 9, 4, 0, 0, 0, 0, time.UTC))
 		})
 	})
 
@@ -140,8 +140,8 @@ func TestWriteToFile(t *testing.T) {
 
 		filePath := FilePath("example", startDate)
 		out, _ := ContentLoader(filePath)
-		if len(out) != 2 {
-			t.Errorf("Expected different line count. Got %v", len(out))
+		if len(out) != 1 {
+			t.Errorf("Expected different line count. Got %v\n%v", len(out), out)
 		}
 
 		if out[0] != "Thu Jan 3 12:30:00 +0000 2013;#test;" {
@@ -151,7 +151,7 @@ func TestWriteToFile(t *testing.T) {
 		WriteToFile("example", endDate, "stop")
 		out, _ = ContentLoader(filePath)
 
-		if len(out) != 3 {
+		if len(out) != 2 {
 			t.Errorf("Expected different line count. Got %v", len(out))
 		}
 		if out[1] != "Thu Jan 3 13:30:00 +0000 2013;stop;" {
@@ -170,7 +170,7 @@ func TestRunningLoader(t *testing.T) {
 
 		filePath := FilePath("example", startDate)
 		out, _ := RunningLoader(filePath)
-		if len(out) != 3 {
+		if len(out) != 2 {
 			t.Errorf("Expected different line count. Got %v", len(out))
 		}
 
