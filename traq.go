@@ -139,7 +139,8 @@ func SummarizeDate(project string, dates ...time.Time) {
 		}
 	}
 
-	fmt.Printf("%4d-%02d-%02d\n", year, month, day)
+	date := dates[0]
+	fmt.Printf("%4d-%02d-%02d\n", date.Year(), date.Month(), date.Day())
 	for key, value := range tags {
 		fmt.Printf("%s:%2.4f\n", key, float64(value)/60.0/60.0)
 	}
@@ -186,61 +187,44 @@ func WriteToFile(project string, date time.Time, command string) {
 	}
 }
 
-var (
-	month    int
-	year     int
-	day      int
-	project  string = "timestamps"
-	date     string
-	evaluate bool
-	running  bool
-	summary  bool
-)
-
 func main() {
-	flag.BoolVar(&evaluate, "e", false, "evaluate tracked times")
-	flag.BoolVar(&running, "r", false, "add fake stop entry to evaluate if stop is missing")
-	flag.BoolVar(&summary, "s", false, "summaries the given timeframe")
-
-	flag.IntVar(&year, "y", 0, "print tracked times for a given year")
-	flag.IntVar(&month, "m", 0, "print tracked times for a given month")
-
-	flag.StringVar(&date, "d", "", "print tracked times for a given date")
-	flag.StringVar(&project, "p", "", "print data for a given project")
+	var (
+		month    = flag.Int("m", 0, "print tracked times for a given month")
+		year     = flag.Int("y", 0, "print tracked times for a given year")
+		project  = flag.String("p", "timestamps", "print data for a given project")
+		date     = flag.String("d", "", "print tracked times for a given date")
+		evaluate = flag.Bool("e", false, "evaluate tracked times")
+		running  = flag.Bool("r", false, "add fake stop entry to evaluate if stop is missing")
+		summary  = flag.Bool("s", false, "summaries the given timeframe")
+	)
 
 	flag.Parse()
 
 	var now = time.Now()
-	var t, error = time.Parse("2006-01-02", date)
+	var t, error = time.Parse("2006-01-02", *date)
 	if error == nil {
-		year = t.Year()
-		month = int(t.Month())
-		day = t.Day()
+		*year = t.Year()
+		*month = int(t.Month())
 	} else {
-		if month == 0 && year == 0 {
-			day = now.Day()
-		} else {
-			day = 1
+		if *year == 0 {
+			*year = now.Year()
 		}
-		if year == 0 {
-			year = now.Year()
-		}
-		if month == 0 {
-			month = int(now.Month())
+		if *month == 0 {
+			*month = int(now.Month())
 		}
 	}
 
 	var loader LogLoader = ContentLoader
 
-	if running {
+	if *running {
 		loader = RunningLoader
 	}
 
-	if evaluate {
-		if date == "" {
-			EvaluateDate(loader, project, DatesInMonth(year, month)...)
+	if *evaluate {
+		if *date == "" {
+			EvaluateDate(loader, *project, DatesInMonth(*year, *month)...)
 		} else {
-			EvaluateDate(loader, project, t)
+			EvaluateDate(loader, *project, t)
 		}
 		return
 	}
@@ -248,17 +232,17 @@ func main() {
 	var command string = flag.Arg(0)
 
 	var handler TraqHandler = PrintDate
-	if summary {
+	if *summary {
 		handler = SummarizeDate
 	}
 
 	if command == "" {
-		if date == "" {
-			handler(project, DatesInMonth(year, month)...)
+		if *date == "" {
+			handler(*project, DatesInMonth(*year, *month)...)
 		} else {
-			handler(project, t)
+			handler(*project, t)
 		}
 	} else {
-		WriteToFile(project, now, command)
+		WriteToFile(*project, now, command)
 	}
 }
