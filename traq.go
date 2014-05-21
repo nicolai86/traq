@@ -9,7 +9,6 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 )
 
@@ -32,39 +31,33 @@ func DatesInMonth(year int, month int) []time.Time {
 // SumFile evaluates the content of a traq tracking file.
 // The returned map contains every tag contained in the file as well as the
 // tracked duration in seconds.
-func SumFile(lines []string) (map[string]int64, error) {
+func SumFile(lines []TimeEntry) (map[string]int64, error) {
 	var totalled map[string]int64 = make(map[string]int64)
 
 	var currentTag string = ""
 	var currentTime time.Time
 
-	for _, line := range lines {
-		if line != "" {
-			var parts []string = strings.Split(line, ";")
-
-			var t, error = time.Parse("Mon Jan 2 15:04:05 -0700 2006", parts[0])
-			if error == nil {
-				if parts[1] == "" {
-					currentTag = parts[1]
-					totalled[currentTag] = 0
-				} else if parts[1] == "stop" {
-					var diff = t.Unix() - currentTime.Unix()
-					totalled[currentTag] = totalled[currentTag] + diff
-					currentTag = ""
-				} else if currentTag != parts[1] {
-					var diff = t.Unix() - currentTime.Unix()
-					totalled[currentTag] = totalled[currentTag] + diff
-					currentTag = parts[1]
-				}
-
-				currentTime = t
-			} else {
-				return totalled, error
-			}
+	for _, entry := range lines {
+		_, ok := totalled[entry.Tag]
+		if !ok {
+			totalled[entry.Tag] = 0
 		}
+
+		if entry.Tag == "stop" {
+			var diff = entry.Date.Unix() - currentTime.Unix()
+			totalled[currentTag] = totalled[currentTag] + diff
+			currentTag = ""
+		} else if currentTag != entry.Tag {
+			var diff = entry.Date.Unix() - currentTime.Unix()
+			totalled[currentTag] = totalled[currentTag] + diff
+			currentTag = entry.Tag
+		}
+
+		currentTime = entry.Date
 	}
 
 	delete(totalled, "")
+	delete(totalled, "stop")
 
 	return totalled, nil
 }
@@ -78,8 +71,10 @@ func PrintDate(storage TimeEntryReader, dates ...time.Time) {
 		content, err := storage.Content(date)
 
 		if err == nil {
-			fmt.Print(strings.Join(content, "\n"))
-			fmt.Println("\n%%")
+			for _, entry := range content {
+				fmt.Printf("%s;%s;%s\n", entry.Date.Format("Mon Jan 02 15:04:05 -0700 2006"), entry.Tag, entry.Comment)
+			}
+			fmt.Println("%%")
 		}
 	}
 }

@@ -88,7 +88,7 @@ func TestEvaluateDate(t *testing.T) {
 }
 
 func TestEmptySumFile(t *testing.T) {
-	content := []string{""}
+	content := []TimeEntry{}
 	var summed, error = SumFile(content)
 
 	if error == nil {
@@ -102,16 +102,16 @@ func TestEmptySumFile(t *testing.T) {
 }
 
 func TestSimpleSumFile(t *testing.T) {
-	content := []string{
-		"Mon Oct 28 21:45:33 +0100 2013;#work;",
-		"Mon Oct 28 23:24:49 +0100 2013;stop;",
+	content := []TimeEntry{
+		TimeEntry{time.Date(2013, 10, 28, 21, 45, 33, 0, time.FixedZone("Berlin", int(time.Hour)*1)), "#work", ""},
+		TimeEntry{time.Date(2013, 10, 28, 23, 15, 33, 0, time.FixedZone("Berlin", int(time.Hour)*1)), "stop", ""},
 	}
 	var summed, error = SumFile(content)
 
 	if error == nil {
 		var total, ok = summed["#work"]
-		if total != 5956 || !ok {
-			t.Errorf("summed['#work'] = %v, want %v", total, 5956)
+		if total != 5400 || !ok {
+			t.Errorf("summed['#work'] = %v, want %v", total, 5400)
 		}
 	} else {
 		t.Errorf("parsing error %v", error)
@@ -119,10 +119,10 @@ func TestSimpleSumFile(t *testing.T) {
 }
 
 func TestNoStopSumFile(t *testing.T) {
-	content := []string{
-		"Mon Oct 28 20:00:00 +0100 2013;#play;",
-		"Mon Oct 28 21:45:33 +0100 2013;#work;",
-		"Mon Oct 28 23:24:49 +0100 2013;stop;",
+	content := []TimeEntry{
+		TimeEntry{time.Date(2013, 10, 28, 20, 0, 0, 0, time.UTC), "#play", ""},
+		TimeEntry{time.Date(2013, 10, 28, 21, 45, 33, 0, time.UTC), "#work", ""},
+		TimeEntry{time.Date(2013, 10, 28, 23, 24, 29, 0, time.UTC), "stop", ""},
 	}
 	var summed, error = SumFile(content)
 
@@ -132,19 +132,19 @@ func TestNoStopSumFile(t *testing.T) {
 			t.Errorf("summed['#play'] = %v, want %v", total, 6333)
 		}
 		total, ok = summed["#work"]
-		if total != 5956 || !ok {
-			t.Errorf("summed['#work'] = %v, want %v", total, 5956)
+		if total != 5936 || !ok {
+			t.Errorf("summed['#work'] = %v, want %v", total, 5936)
 		}
 	} else {
 		t.Errorf("parsing error %v", error)
 	}
 }
 func TestWithStopSumFile(t *testing.T) {
-	content := []string{
-		"Mon Oct 28 20:00:00 +0100 2013;#play;",
-		"Mon Oct 28 21:45:33 +0100 2013;stop;",
-		"Mon Oct 28 21:45:33 +0100 2013;#work;",
-		"Mon Oct 28 23:24:49 +0100 2013;stop;",
+	content := []TimeEntry{
+		TimeEntry{time.Date(2013, 10, 28, 20, 0, 0, 0, time.UTC), "#play", ""},
+		TimeEntry{time.Date(2013, 10, 28, 21, 45, 33, 0, time.UTC), "stop", ""},
+		TimeEntry{time.Date(2013, 10, 28, 21, 45, 33, 0, time.UTC), "#work", ""},
+		TimeEntry{time.Date(2013, 10, 28, 23, 24, 29, 0, time.UTC), "stop", ""},
 	}
 	var summed, error = SumFile(content)
 
@@ -154,8 +154,8 @@ func TestWithStopSumFile(t *testing.T) {
 			t.Errorf("summed['#play'] = %v, want %v", total, 6333)
 		}
 		total, ok = summed["#work"]
-		if total != 5956 || !ok {
-			t.Errorf("summed['#work'] = %v, want %v", total, 5956)
+		if total != 5936 || !ok {
+			t.Errorf("summed['#work'] = %v, want %v", total, 5936)
 		}
 	} else {
 		t.Errorf("parsing error %v", error)

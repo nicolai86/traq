@@ -8,7 +8,7 @@ import (
 )
 
 type TimeEntryReader interface {
-	Content(time.Time) ([]string, error)
+	Content(time.Time) ([]TimeEntry, error)
 }
 
 type TimeEntryWriter interface {
@@ -52,6 +52,15 @@ func (fs *FileSystemStorage) Store(entry TimeEntry) error {
 	return err
 }
 
-func (fs *FileSystemStorage) Content(date time.Time) ([]string, error) {
-	return fs.loader(fs.Path(date))
+func (fs *FileSystemStorage) Content(date time.Time) ([]TimeEntry, error) {
+	lines, err := fs.loader(fs.Path(date))
+	if err != nil {
+		return nil, err
+	}
+
+	entries := make([]TimeEntry, len(lines))
+	for i, line := range lines {
+		entries[i] = ReadEntry(line)
+	}
+	return entries, nil
 }
