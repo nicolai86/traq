@@ -87,15 +87,6 @@ func TestEvaluateDate(t *testing.T) {
 	}
 }
 
-func TestEntry(t *testing.T) {
-	expected := `Wed Sep 3 12:00:00 +0000 1986;#test;
-`
-
-	if entry := Entry(time.Date(1986, 9, 3, 12, 0, 0, 0, time.UTC), "#test", ""); entry != expected {
-		t.Errorf("got wrong entry. Expected '%v' got '%v'", expected, entry)
-	}
-}
-
 func TestEmptySumFile(t *testing.T) {
 	content := []string{""}
 	var summed, error = SumFile(content)

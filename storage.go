@@ -25,12 +25,17 @@ func (fs *FileSystemStorage) Path(date time.Time) string {
 	return fmt.Sprintf("%s/%s/%d/%d-%02d-%02d", fs.BasePath, fs.Project, date.Year(), date.Year(), date.Month(), date.Day())
 }
 
+func serialize(entry TimeEntry) string {
+	return fmt.Sprintf("%s;%s;%s\n", entry.Date.Format("Mon Jan 2 15:04:05 -0700 2006"), entry.Tag, entry.Comment)
+}
+
 func (fs *FileSystemStorage) Store(entry TimeEntry) error {
 	command := entry.Tag
 	date := entry.Date
 	if command != "stop" {
 		command = "#" + command
 	}
+	entry.Tag = command
 
 	var traqFile string = fs.Path(date)
 	var projectDir string = path.Dir(traqFile)
@@ -42,7 +47,7 @@ func (fs *FileSystemStorage) Store(entry TimeEntry) error {
 	}
 
 	defer file.Close()
-	file.WriteString(Entry(date, command, ""))
+	file.WriteString(serialize(entry))
 
 	return err
 }

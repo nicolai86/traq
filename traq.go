@@ -129,10 +129,6 @@ func EvaluateDate(storage TimeEntryReader, dates ...time.Time) {
 	}
 }
 
-func Entry(date time.Time, command string, comment string) string {
-	return fmt.Sprintf("%s;%s;%s\n", date.Format("Mon Jan 2 15:04:05 -0700 2006"), command, comment)
-}
-
 func main() {
 	var (
 		month    = flag.Int("m", 0, "print tracked times for a given month")

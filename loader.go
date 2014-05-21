@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"regexp"
 	"strings"
@@ -53,7 +54,7 @@ func RunningLoader(filePath string) ([]string, error) {
 			return content, err
 		}
 
-		var line = Entry(time.Now(), "stop", "")
+		var line = fmt.Sprintf("%s;stop;\n", time.Now().Format("Mon Jan 2 15:04:05 -0700 2006"))
 		n := len(content)
 		newContent := make([]string, n+1)
 		copy(newContent, content)
