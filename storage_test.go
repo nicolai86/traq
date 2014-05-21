@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"os"
 	"path"
 	"testing"
@@ -34,4 +35,13 @@ func TestFileStorageStore(t *testing.T) {
 	}
 
 	os.RemoveAll(path.Dir(storage.Path(startDate)))
+}
+
+func TestFileStoragePath(t *testing.T) {
+	storage := NewFixtureFileStorage()
+	path := storage.Path(time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC))
+
+	if !bytes.HasSuffix([]byte(path), []byte("/example/1986/1986-09-03")) {
+		t.Errorf("FilePath = %v, want %v", path, os.Getenv("TRAQ_DATA_DIR")+"/example/1986/1986-09-03")
+	}
 }

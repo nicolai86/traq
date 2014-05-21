@@ -13,12 +13,6 @@ import (
 	"time"
 )
 
-// FilePath returns the path to a traq tracking file, taking the current
-// env into account.
-func FilePath(project string, date time.Time) (path string) {
-	return fmt.Sprintf("%s/%s/%d/%d-%02d-%02d", os.Getenv("TRAQ_DATA_DIR"), project, date.Year(), date.Year(), date.Month(), date.Day())
-}
-
 // DatesInMonth calculates the days of a given month and year.
 func DatesInMonth(year int, month int) []time.Time {
 	var dates []time.Time = make([]time.Time, 0)

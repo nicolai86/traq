@@ -1,7 +1,6 @@
 package main
 
 import (
-	"os"
 	"strings"
 	"testing"
 	"time"
@@ -94,14 +93,6 @@ func TestEntry(t *testing.T) {
 
 	if entry := Entry(time.Date(1986, 9, 3, 12, 0, 0, 0, time.UTC), "#test", ""); entry != expected {
 		t.Errorf("got wrong entry. Expected '%v' got '%v'", expected, entry)
-	}
-}
-
-func TestFilePath(t *testing.T) {
-	var path string = FilePath("example", time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC))
-
-	if path != os.Getenv("TRAQ_DATA_DIR")+"/example/1986/1986-09-03" {
-		t.Errorf("FilePath = %v, want %v", path, os.Getenv("TRAQ_DATA_DIR")+"/example/1986/1986-09-03")
 	}
 }
 
