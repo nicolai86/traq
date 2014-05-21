@@ -9,34 +9,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path"
 	"strings"
 	"time"
 )
-
-type TimeEntryStorage interface {
-	Store(TimeEntry) error
-	Content(time.Time) ([]string, error)
-}
-
-type FileSystemStorage struct {
-	BasePath string
-	Project  string
-	loader   LogLoader
-}
-
-func (fs *FileSystemStorage) Path(date time.Time) string {
-	return fmt.Sprintf("%s/%s/%d/%d-%02d-%02d", fs.BasePath, fs.Project, date.Year(), date.Year(), date.Month(), date.Day())
-}
-
-func (fs *FileSystemStorage) Store(entry TimeEntry) error {
-	WriteToFile(fs.Project, entry.Date, entry.Tag)
-	return nil
-}
-
-func (fs *FileSystemStorage) Content(date time.Time) ([]string, error) {
-	return fs.loader(fs.Path(date))
-}
 
 // FilePath returns the path to a traq tracking file, taking the current
 // env into account.
@@ -100,13 +75,13 @@ func SumFile(lines []string) (map[string]int64, error) {
 	return totalled, nil
 }
 
-type TraqHandler func(string, LogLoader, ...time.Time)
+type TraqHandler func(TimeEntryReader, ...time.Time)
 
 // PrintDate prints the content of a single traqfile, identified by the project identifer
 // and its date
-func PrintDate(project string, loader LogLoader, dates ...time.Time) {
+func PrintDate(storage TimeEntryReader, dates ...time.Time) {
 	for _, date := range dates {
-		content, err := loader(FilePath(project, date))
+		content, err := storage.Content(date)
 
 		if err == nil {
 			fmt.Print(strings.Join(content, "\n"))
@@ -115,10 +90,10 @@ func PrintDate(project string, loader LogLoader, dates ...time.Time) {
 	}
 }
 
-func SummarizeDate(project string, loader LogLoader, dates ...time.Time) {
+func SummarizeDate(storage TimeEntryReader, dates ...time.Time) {
 	var tags map[string]int64 = make(map[string]int64)
 	for _, date := range dates {
-		content, err := loader(FilePath(project, date))
+		content, err := storage.Content(date)
 
 		if err == nil {
 			var totalled, _ = SumFile(content)
@@ -143,7 +118,7 @@ func SummarizeDate(project string, loader LogLoader, dates ...time.Time) {
 
 // EvaluateDate prints the evaluation of a single traqfile, identified by the project identifier
 // and its date
-func evaluateDate(contentLoader LogLoader, storage TimeEntryStorage, dates ...time.Time) {
+func EvaluateDate(storage TimeEntryReader, dates ...time.Time) {
 	for _, date := range dates {
 		var content, error = storage.Content(date)
 
@@ -162,24 +137,6 @@ func evaluateDate(contentLoader LogLoader, storage TimeEntryStorage, dates ...ti
 
 func Entry(date time.Time, command string, comment string) string {
 	return fmt.Sprintf("%s;%s;%s\n", date.Format("Mon Jan 2 15:04:05 -0700 2006"), command, comment)
-}
-
-// WriteToFile writes a given command to a traq file, converting it into a tag
-// if it's no known command.
-func WriteToFile(project string, date time.Time, command string) {
-	if command != "stop" {
-		command = "#" + command
-	}
-
-	var traqFile string = FilePath(project, date)
-	var projectDir string = path.Dir(traqFile)
-
-	_ = os.MkdirAll(projectDir, os.ModeDir|os.ModePerm)
-	var file, error = os.OpenFile(traqFile, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
-	if error == nil {
-		file.WriteString(Entry(date, command, ""))
-		file.Close()
-	}
 }
 
 func main() {
@@ -219,9 +176,9 @@ func main() {
 
 	if *evaluate {
 		if *date == "" {
-			evaluateDate(loader, &storageProvider, DatesInMonth(*year, *month)...)
+			EvaluateDate(&storageProvider, DatesInMonth(*year, *month)...)
 		} else {
-			evaluateDate(loader, &storageProvider, t)
+			EvaluateDate(&storageProvider, t)
 		}
 		return
 	}
@@ -235,11 +192,11 @@ func main() {
 
 	if command == "" {
 		if *date == "" {
-			handler(*project, loader, DatesInMonth(*year, *month)...)
+			handler(&storageProvider, DatesInMonth(*year, *month)...)
 		} else {
-			handler(*project, loader, t)
+			handler(&storageProvider, t)
 		}
 	} else {
-		WriteToFile(*project, now, command)
+		storageProvider.Store(TimeEntry{now, command, ""})
 	}
 }

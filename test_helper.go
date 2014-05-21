@@ -7,14 +7,19 @@ import (
 	"os"
 )
 
-func WithFakeEnv(block func()) {
-	oldEnv := os.Getenv("TRAQ_DATA_DIR")
-	path, _ := os.Getwd()
-	os.Setenv("TRAQ_DATA_DIR", path+"/fixtures")
-
-	block()
-
-	os.Setenv("TRAQ_DATA_DIR", oldEnv)
+func NewFixtureFileStorage() *FileSystemStorage {
+	path, err := os.Getwd()
+	if err != nil {
+		return nil
+	}
+	return &FileSystemStorage{path + "/fixtures", "example", ContentLoader}
+}
+func NewRunningFixtureFileStorage() *FileSystemStorage {
+	path, err := os.Getwd()
+	if err != nil {
+		return nil
+	}
+	return &FileSystemStorage{path + "/fixtures", "example", RunningLoader}
 }
 
 // capture output written to os.Stdout and return it

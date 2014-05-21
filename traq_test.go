@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"path"
 	"strings"
 	"testing"
 	"time"
@@ -25,10 +24,11 @@ func TestDatesInMonth(t *testing.T) {
 }
 
 func TestPrintDate(t *testing.T) {
+	storage := NewFixtureFileStorage()
 	out := CaptureStdout(func() {
-		WithFakeEnv(func() {
-			PrintDate("example", ContentLoader, time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC))
-		})
+		PrintDate(storage,
+			time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC),
+		)
 	})
 
 	expected :=
@@ -43,10 +43,13 @@ Wed Sep 03 23:24:49 +0100 1986;stop;
 }
 
 func TestSummarizeDate(t *testing.T) {
+	storage := NewFixtureFileStorage()
+
 	out := CaptureStdout(func() {
-		WithFakeEnv(func() {
-			SummarizeDate("example", ContentLoader, time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC), time.Date(1986, 9, 4, 0, 0, 0, 0, time.UTC))
-		})
+		SummarizeDate(storage,
+			time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC),
+			time.Date(1986, 9, 4, 0, 0, 0, 0, time.UTC),
+		)
 	})
 
 	expectedLines := map[string]bool{
@@ -66,9 +69,8 @@ func TestSummarizeDate(t *testing.T) {
 
 func TestEvaluateDate(t *testing.T) {
 	out := CaptureStdout(func() {
-		WithFakeEnv(func() {
-			EvaluateDate(ContentLoader, "example", time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC))
-		})
+		storage := NewFixtureFileStorage()
+		EvaluateDate(storage, time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC))
 	})
 
 	expectedLines := map[string]bool{
@@ -93,37 +95,6 @@ func TestEntry(t *testing.T) {
 	if entry := Entry(time.Date(1986, 9, 3, 12, 0, 0, 0, time.UTC), "#test", ""); entry != expected {
 		t.Errorf("got wrong entry. Expected '%v' got '%v'", expected, entry)
 	}
-}
-
-func TestWriteToFile(t *testing.T) {
-	startDate := time.Date(2013, 1, 3, 12, 30, 0, 0, time.UTC)
-	endDate := time.Date(2013, 1, 3, 13, 30, 0, 0, time.UTC)
-
-	WithFakeEnv(func() {
-		WriteToFile("example", startDate, "test")
-
-		filePath := FilePath("example", startDate)
-		out, _ := ContentLoader(filePath)
-		if len(out) != 1 {
-			t.Errorf("Expected different line count. Got %v\n%v", len(out), out)
-		}
-
-		if out[0] != "Thu Jan 3 12:30:00 +0000 2013;#test;" {
-			t.Errorf("Expected different first line. Got %v", out[0])
-		}
-
-		WriteToFile("example", endDate, "stop")
-		out, _ = ContentLoader(filePath)
-
-		if len(out) != 2 {
-			t.Errorf("Expected different line count. Got %v", len(out))
-		}
-		if out[1] != "Thu Jan 3 13:30:00 +0000 2013;stop;" {
-			t.Errorf("Expected different stop line. Got %v", out[1])
-		}
-
-		os.RemoveAll(path.Dir(filePath))
-	})
 }
 
 func TestFilePath(t *testing.T) {

@@ -15,27 +15,26 @@ func TestRunningLoader(t *testing.T) {
 		"stop":  false,
 	}
 
-	WithFakeEnv(func() {
-		WriteToFile("example", startDate, "test")
+	storage := NewRunningFixtureFileStorage()
+	storage.Store(TimeEntry{startDate, "test", ""})
 
-		filePath := FilePath("example", startDate)
-		out, _ := RunningLoader(filePath)
+	filePath := storage.Path(startDate)
+	out, _ := RunningLoader(filePath)
 
-		for _, line := range out {
-			entry := ReadEntry(line)
-			tags[entry.Tag] = true
+	for _, line := range out {
+		entry := ReadEntry(line)
+		tags[entry.Tag] = true
+	}
+
+	if len(out) != 2 {
+		t.Errorf("Expected different line count. Got %v\n%v", len(out), out)
+	}
+
+	for key, present := range tags {
+		if !present {
+			t.Errorf("unexpected EvaluateDate output. Expected '%v', missing from '%v'", key, out)
 		}
+	}
 
-		if len(out) != 3 {
-			t.Errorf("Expected different line count. Got %v", len(out))
-		}
-
-		for key, present := range tags {
-			if !present {
-				t.Errorf("unexpected EvaluateDate output. Expected '%v', missing from '%v'", key, out)
-			}
-		}
-
-		os.RemoveAll(path.Dir(filePath))
-	})
+	os.RemoveAll(path.Dir(filePath))
 }
