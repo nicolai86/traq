@@ -104,12 +104,16 @@ func TestSumFile(t *testing.T) {
 		{ // to the second exactly 90 minutes, but with +0100 hour difference in time zone
 			"#work": 1800,
 		},
+		// { // to the second exactly 90 minutes, but with +0900 hours and +0100 hours
+		// 	"#work": 28800,
+		// },
 		{ // missing stop tag. 12 hours, but the day ends at 23:59:59
 			"#play": 43199,
 		},
 	}
 
-	loc, _ := time.LoadLocation("Europe/Berlin")
+	berlin, _ := time.LoadLocation("Europe/Berlin")
+	// tokyo, _ := time.LoadLocation("Asia/Tokyo")
 	times := [][]TimeEntry{
 		{},
 		{
@@ -129,8 +133,12 @@ func TestSumFile(t *testing.T) {
 		},
 		{
 			TimeEntry{time.Date(2013, 10, 28, 21, 00, 33, 0, time.UTC), "#work", ""},
-			TimeEntry{time.Date(2013, 10, 28, 22, 30, 33, 0, loc), "stop", ""},
+			TimeEntry{time.Date(2013, 10, 28, 22, 30, 33, 0, berlin), "stop", ""},
 		},
+		// {
+		// 	TimeEntry{time.Date(2013, 10, 28, 21, 00, 33, 0, tokyo), "#work", ""},
+		// 	TimeEntry{time.Date(2013, 10, 28, 21, 00, 33, 0, berlin), "stop", ""},
+		// },
 		{
 			TimeEntry{time.Date(2013, 10, 28, 12, 0, 0, 0, time.UTC), "#play", ""},
 		},
