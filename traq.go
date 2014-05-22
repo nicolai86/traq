@@ -56,6 +56,14 @@ func SumFile(lines []TimeEntry) (map[string]int64, error) {
 		currentTime = entry.Date
 	}
 
+	// we did not end with a stop tag
+	// this problem can be avoided by using the RunningEvaluator when parsing a time file
+	if currentTag != "stop" {
+		var diff = time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 23, 59, 59, 0, currentTime.Location()).Unix() - currentTime.Unix()
+		totalled[currentTag] = totalled[currentTag] + diff
+		currentTag = ""
+	}
+
 	delete(totalled, "")
 	delete(totalled, "stop")
 
