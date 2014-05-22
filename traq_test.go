@@ -44,24 +44,19 @@ Wed Sep 03 23:24:49 +0100 1986;stop;
 func TestSummarizeDate(t *testing.T) {
 	storage := NewFixtureFileStorage()
 
-	out := CaptureStdout(func() {
-		SummarizeDate(storage,
-			time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC),
-			time.Date(1986, 9, 4, 0, 0, 0, 0, time.UTC),
-		)
-	})
+	out := SummarizeDate(storage,
+		time.Date(1986, 9, 3, 0, 0, 0, 0, time.UTC),
+		time.Date(1986, 9, 4, 0, 0, 0, 0, time.UTC),
+	)
 
-	expectedLines := map[string]bool{
-		"#birth:1.7592":    false,
-		"#chillout:3.3089": false,
-		"#sleeping:1.7592": false,
+	expected := map[string]int64{
+		"#birth":    6333,
+		"#chillout": 11912,
+		"#sleeping": 6333,
 	}
-	for _, line := range strings.Split(out, "\n") {
-		expectedLines[line] = true
-	}
-	for key, present := range expectedLines {
-		if !present {
-			t.Errorf("unexpected EvaluateDate output. Expected '%v', missing from '%v'", key, out)
+	for tag, duration := range expected {
+		if out[tag] != duration {
+			t.Errorf("unexpected result for %v. Expected '%v' got '%v'", tag, duration, out[tag])
 		}
 	}
 }

@@ -70,8 +70,6 @@ func SumFile(lines []TimeEntry) (map[string]int64, error) {
 	return totalled, nil
 }
 
-type TraqHandler func(TimeEntryReader, ...time.Time)
-
 // PrintDate prints the content of a single traqfile, identified by the project identifer
 // and its date
 func PrintDate(storage TimeEntryReader, dates ...time.Time) {
@@ -87,7 +85,7 @@ func PrintDate(storage TimeEntryReader, dates ...time.Time) {
 	}
 }
 
-func SummarizeDate(storage TimeEntryReader, dates ...time.Time) {
+func SummarizeDate(storage TimeEntryReader, dates ...time.Time) map[string]int64 {
 	var tags map[string]int64 = make(map[string]int64)
 	for _, date := range dates {
 		content, err := storage.Content(date)
@@ -106,8 +104,10 @@ func SummarizeDate(storage TimeEntryReader, dates ...time.Time) {
 		}
 	}
 
-	date := dates[0]
-	fmt.Printf("%4d-%02d-%02d\n", date.Year(), date.Month(), date.Day())
+	return tags
+}
+
+func PrintSummary(tags map[string]int64) {
 	for key, value := range tags {
 		fmt.Printf("%s:%2.4f\n", key, float64(value)/60.0/60.0)
 	}
@@ -178,16 +178,20 @@ func main() {
 
 	var command string = flag.Arg(0)
 
-	var handler TraqHandler = PrintDate
-	if *summary {
-		handler = SummarizeDate
+	printDate := !*summary
+	handler := func(storage FileSystemStorage, dates ...time.Time) {
+		if printDate {
+			PrintDate(&storageProvider, dates...)
+		} else {
+			PrintSummary(SummarizeDate(&storageProvider, dates...))
+		}
 	}
 
 	if command == "" {
 		if *date == "" {
-			handler(&storageProvider, DatesInMonth(*year, *month)...)
+			handler(storageProvider, DatesInMonth(*year, *month)...)
 		} else {
-			handler(&storageProvider, t)
+			handler(storageProvider, t)
 		}
 	} else {
 		storageProvider.Store(TimeEntry{now, command, ""})
