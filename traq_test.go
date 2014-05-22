@@ -89,6 +89,7 @@ func TestEvaluateDate(t *testing.T) {
 
 func TestSumFile(t *testing.T) {
 	results := []map[string]int64{
+		{}, // empty file - no errors
 		{ // no stop between different tags
 			"#play": 6333,
 			"#work": 5936,
@@ -97,16 +98,20 @@ func TestSumFile(t *testing.T) {
 			"#play": 6333,
 			"#work": 5936,
 		},
-		{},
 		{ // to the second exactly 90 minutes
 			"#work": 5400,
+		},
+		{ // to the second exactly 90 minutes, but with +0100 hour difference in time zone
+			"#work": 1800,
 		},
 		{ // missing stop tag. 12 hours, but the day ends at 23:59:59
 			"#play": 43199,
 		},
 	}
 
+	loc, _ := time.LoadLocation("Europe/Berlin")
 	times := [][]TimeEntry{
+		{},
 		{
 			TimeEntry{time.Date(2013, 10, 28, 20, 0, 0, 0, time.UTC), "#play", ""},
 			TimeEntry{time.Date(2013, 10, 28, 21, 45, 33, 0, time.UTC), "#work", ""},
@@ -118,10 +123,13 @@ func TestSumFile(t *testing.T) {
 			TimeEntry{time.Date(2013, 10, 28, 21, 45, 33, 0, time.UTC), "#work", ""},
 			TimeEntry{time.Date(2013, 10, 28, 23, 24, 29, 0, time.UTC), "stop", ""},
 		},
-		{},
 		{
-			TimeEntry{time.Date(2013, 10, 28, 21, 00, 33, 0, time.FixedZone("Berlin", int(time.Hour)*1)), "#work", ""},
-			TimeEntry{time.Date(2013, 10, 28, 22, 30, 33, 0, time.FixedZone("Berlin", int(time.Hour)*1)), "stop", ""},
+			TimeEntry{time.Date(2013, 10, 28, 21, 00, 33, 0, time.UTC), "#work", ""},
+			TimeEntry{time.Date(2013, 10, 28, 22, 30, 33, 0, time.UTC), "stop", ""},
+		},
+		{
+			TimeEntry{time.Date(2013, 10, 28, 21, 00, 33, 0, time.UTC), "#work", ""},
+			TimeEntry{time.Date(2013, 10, 28, 22, 30, 33, 0, loc), "stop", ""},
 		},
 		{
 			TimeEntry{time.Date(2013, 10, 28, 12, 0, 0, 0, time.UTC), "#play", ""},
