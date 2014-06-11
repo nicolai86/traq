@@ -1,4 +1,4 @@
-package main
+package traq
 
 // change traq env to use our fixtures
 import (
