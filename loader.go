@@ -49,19 +49,20 @@ var stopLine = regexp.MustCompile(`;stop;`)
 func RunningLoader(filePath string) ([]string, error) {
 	content, err := ContentLoader(filePath)
 
-	if err == nil {
-		if stopLine.MatchString(content[len(content)-1]) {
-			return content, err
-		}
-
-		var line = fmt.Sprintf("%s;stop;\n", time.Now().Format("Mon Jan 2 15:04:05 -0700 2006"))
-		n := len(content)
-		newContent := make([]string, n+1)
-		copy(newContent, content)
-		newContent[n] = line
-
-		return newContent, err
+	if err != nil {
+		return content, err
 	}
 
-	return content, err
+	if stopLine.MatchString(content[len(content)-1]) {
+		return content, err
+	}
+
+	var line = fmt.Sprintf("%s;stop;\n", time.Now().Format("Mon Jan 2 15:04:05 -0700 2006"))
+
+	n := len(content)
+	newContent := make([]string, n+1)
+	copy(newContent, content)
+	newContent[n] = line
+
+	return newContent, err
 }
