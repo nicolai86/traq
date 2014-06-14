@@ -1,4 +1,4 @@
-package traq
+package main
 
 import (
 	"bytes"

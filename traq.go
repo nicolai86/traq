@@ -3,7 +3,7 @@
 /*
 Package traq implements a CLI for time tracking.
 */
-package traq
+package main
 
 import (
 	"flag"
