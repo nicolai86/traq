@@ -1,10 +1,9 @@
 /*
 Package traq implements helper methods for time tracking.
 */
-package main
+package traq
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -22,8 +21,8 @@ func FilePath(project string, date time.Time) (path string) {
 
 // DatesInMonth calculates the days of a given month and year.
 func DatesInMonth(year int, month int) []time.Time {
-	var dates []time.Time = make([]time.Time, 0)
-	var date time.Time = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
+	var dates = make([]time.Time, 0)
+	var date = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
 
 	for {
 		dates = append(dates, date)
@@ -36,8 +35,10 @@ func DatesInMonth(year int, month int) []time.Time {
 	return dates
 }
 
+// LogLoader defines a simple abstraction to support different loading backends
 type LogLoader func(string) ([]string, error)
 
+// ContentLoader loads file contents
 func ContentLoader(filePath string) ([]string, error) {
 	content, err := ioutil.ReadFile(filePath)
 	lines := strings.Split(string(content), "\n")
@@ -49,6 +50,7 @@ func ContentLoader(filePath string) ([]string, error) {
 
 var stopLine = regexp.MustCompile(`;stop;`)
 
+// RunningLoader inserts a transient stop if necessary
 func RunningLoader(filePath string) ([]string, error) {
 	content, err := ContentLoader(filePath)
 
@@ -73,14 +75,14 @@ func RunningLoader(filePath string) ([]string, error) {
 // The returned map contains every tag contained in the file as well as the
 // tracked duration in seconds.
 func SumFile(lines []string) (map[string]int64, error) {
-	var totalled map[string]int64 = make(map[string]int64)
+	var totalled = make(map[string]int64)
 
-	var currentTag string = ""
+	var currentTag = ""
 	var currentTime time.Time
 
 	for _, line := range lines {
 		if line != "" {
-			var parts []string = strings.Split(line, ";")
+			var parts = strings.Split(line, ";")
 
 			var t, error = time.Parse("Mon Jan 2 15:04:05 -0700 2006", parts[0])
 			if error == nil {
@@ -109,7 +111,8 @@ func SumFile(lines []string) (map[string]int64, error) {
 	return totalled, nil
 }
 
-type TraqHandler func(string, LogLoader, ...time.Time)
+// Handler performs actions on projects/ loaders and timeframes
+type Handler func(string, LogLoader, ...time.Time)
 
 // PrintDate prints the content of a single traqfile, identified by the project identifer
 // and its date
@@ -124,8 +127,9 @@ func PrintDate(project string, loader LogLoader, dates ...time.Time) {
 	}
 }
 
+// SummarizeDate prints summary informations
 func SummarizeDate(project string, loader LogLoader, dates ...time.Time) {
-	var tags map[string]int64 = make(map[string]int64)
+	var tags = make(map[string]int64)
 	for _, date := range dates {
 		content, err := loader(FilePath(project, date))
 
@@ -169,6 +173,7 @@ func EvaluateDate(contentLoader LogLoader, project string, dates ...time.Time) {
 	}
 }
 
+// Entry generates a traq entry
 func Entry(date time.Time, command string) string {
 	return fmt.Sprintf("%s;%s;%s\n", date.Format("Mon Jan 2 15:04:05 -0700 2006"), command, "")
 }
@@ -180,73 +185,13 @@ func WriteToFile(project string, date time.Time, command string) {
 		command = "#" + command
 	}
 
-	var traqFile string = FilePath(project, date)
-	var projectDir string = path.Dir(traqFile)
+	var traqFile = FilePath(project, date)
+	var projectDir = path.Dir(traqFile)
 
 	_ = os.MkdirAll(projectDir, os.ModeDir|os.ModePerm)
 	var file, error = os.OpenFile(traqFile, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0660)
 	if error == nil {
 		file.WriteString(Entry(date, command))
 		file.Close()
-	}
-}
-
-func main() {
-	var (
-		month    = flag.Int("m", 0, "print tracked times for a given month")
-		year     = flag.Int("y", 0, "print tracked times for a given year")
-		project  = flag.String("p", "timestamps", "print data for a given project")
-		date     = flag.String("d", "", "print tracked times for a given date")
-		evaluate = flag.Bool("e", false, "evaluate tracked times")
-		running  = flag.Bool("r", false, "add fake stop entry to evaluate if stop is missing")
-		summary  = flag.Bool("s", false, "summaries the given timeframe")
-	)
-
-	flag.Parse()
-
-	var now = time.Now()
-	var t, error = time.Parse("2006-01-02", *date)
-	if error == nil {
-		*year = t.Year()
-		*month = int(t.Month())
-	} else {
-		if *year == 0 {
-			*year = now.Year()
-		}
-		if *month == 0 {
-			*month = int(now.Month())
-		}
-	}
-
-	var loader LogLoader = ContentLoader
-
-	if *running {
-		loader = RunningLoader
-	}
-
-	if *evaluate {
-		if *date == "" {
-			EvaluateDate(loader, *project, DatesInMonth(*year, *month)...)
-		} else {
-			EvaluateDate(loader, *project, t)
-		}
-		return
-	}
-
-	var command string = flag.Arg(0)
-
-	var handler TraqHandler = PrintDate
-	if *summary {
-		handler = SummarizeDate
-	}
-
-	if command == "" {
-		if *date == "" {
-			handler(*project, loader, DatesInMonth(*year, *month)...)
-		} else {
-			handler(*project, loader, t)
-		}
-	} else {
-		WriteToFile(*project, now, command)
 	}
 }
