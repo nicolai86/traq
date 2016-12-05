@@ -127,8 +127,7 @@ func PrintDate(project string, loader LogLoader, dates ...time.Time) {
 	}
 }
 
-// SummarizeDate prints summary informations
-func SummarizeDate(project string, loader LogLoader, dates ...time.Time) {
+func TotalDate(project string, loader LogLoader, dates ...time.Time) map[string]int64 {
 	var tags = make(map[string]int64)
 	for _, date := range dates {
 		content, err := loader(FilePath(project, date))
@@ -146,6 +145,12 @@ func SummarizeDate(project string, loader LogLoader, dates ...time.Time) {
 			}
 		}
 	}
+	return tags
+}
+
+// SummarizeDate prints summary informations
+func SummarizeDate(project string, loader LogLoader, dates ...time.Time) {
+	var tags = TotalDate(project, loader, dates...)
 
 	date := dates[0]
 	fmt.Printf("%4d-%02d-%02d\n", date.Year(), date.Month(), date.Day())
